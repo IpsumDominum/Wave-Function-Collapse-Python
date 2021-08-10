@@ -1,5 +1,12 @@
 # COMPSCI 715 Group Project
 
+
+### Results (This is incorrect. See Bugs need fixing)
+
+Flower.png             |  Skyline.png           |  Platformer.png
+:-------------------------:|:-------------------------:|:-------------------------:
+![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Platformer](./gifs/Platformer.png.gif)
+
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
 But recommended to use python3, since python2 is no longer maintained.
@@ -35,11 +42,6 @@ python test.py --Flowers.png
 
 2.Constraint 2 is not satisfied. The frequency for choosing the patterns is currently not reflecting global distributions well.
 
-### Results (This is incorrect. See Bugs need fixing)
-
-Flower.png             |  Skyline.png           |  Platformer.png
-:-------------------------:|:-------------------------:|:-------------------------:
-![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Platformer](./gifs/Platformer.png.gif)
 
 
 
