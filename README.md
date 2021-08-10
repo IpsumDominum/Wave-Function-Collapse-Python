@@ -35,7 +35,7 @@ python test.py --Flowers.png
 
 2.Constraint 2 is not satisfied. The frequency for choosing the patterns is currently not reflecting global distributions well.
 
-### Results
+### Results (This is incorrect. See Bugs need fixing)
 
 Flower.png             |  Skyline.png           |  Platformer.png
 :-------------------------:|:-------------------------:|:-------------------------:
