@@ -1,5 +1,12 @@
 # COMPSCI 715 Group Project
 
+
+### Results (This is incorrect. See Bugs need fixing)
+
+Flower.png             |  Skyline.png           |  Platformer.png
+:-------------------------:|:-------------------------:|:-------------------------:
+![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Platformer](./gifs/Platformer.png.gif)
+
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
 But recommended to use python3, since python2 is no longer maintained.
@@ -37,11 +44,6 @@ python test.py --Flowers.png
 4.Overlap Based Rotation and Symmetry.
 5.Tile Based Rotation and Symmetry.
 
-### Results
-
-Flower.png             |  Skyline.png           |  Platformer.png
-:-------------------------:|:-------------------------:|:-------------------------:
-![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Platformer](./gifs/Platformer.png.gif)
 
 
 
