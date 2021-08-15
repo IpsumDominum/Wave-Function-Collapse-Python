@@ -3,9 +3,9 @@
 
 ### Results (Black Block indicates failed to solve constraint)
 
-Flower.png             |  Skyline.png           |  Platformer.png
+Flower.png             |  Skyline.png           |  Test.jpg
 :-------------------------:|:-------------------------:|:-------------------------:
-![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Platformer](./gifs/Platformer.png.gif)
+![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![PixelDungeon](./gifs/test.jpg.gif)
 
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
