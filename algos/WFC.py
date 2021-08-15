@@ -62,7 +62,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     if(write_output):
         frame_width = 512
         frame_height = 512
-        out = cv2.VideoWriter(os.path.join(output_dir,output_name+".avi"),cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+        out = cv2.VideoWriter(os.path.join(output_dir,output_name+".avi"),cv2.VideoWriter_fourcc('M','J','P','G'), 80, (frame_width,frame_height))
     else:
         out = None
 

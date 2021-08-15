@@ -1,11 +1,15 @@
 # COMPSCI 715 Group Project
 
 
-### Results (Black Block indicates failed to solve constraint)
+### Results (Blue Block indicates failed to solve constraint)
 
-Flower.png             |  Skyline.png           |  Test.jpg
-:-------------------------:|:-------------------------:|:-------------------------:
-![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![PixelDungeon](./gifs/test.jpg.gif)
+Flower.png             |  Skyline.png           |  
+:-------------------------:|:-------------------------:|
+![Flower](./gifs/Flowers_speedup.png.gif) |![Skyline](./gifs/Skyline_speedup.png.gif) |
+
+Random Pixel Dungeon Photo | Random Pixel Dungeon Photo Result
+:-------------------------:|:-------------------------:
+![PixelDungeon](./samples/test.jpg)|![PixelDungeon](./gifs/test_speedup.jpg.gif)
 
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
