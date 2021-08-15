@@ -15,7 +15,7 @@ for output, each grid selects out of random one of the selection array membe
 
 def cv_img(img,resize=True,wait=True,id=str(random.random())):
     if(resize):
-        img = cv2.resize(img,(512,512))/255
+        img = cv2.resize(img,(512,512),interpolation=3)/255
     cv2.imshow(id,img)        
     #if(wait):
 def write_img(img,out,resize=True,wait=True,id=str(random.random())):
@@ -103,7 +103,6 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             hash_code = hash_function(input_padded[i:i+N,j:j+N,:])
             cropped_list.append(hash_code)
             hash_to_idx_dict[hash_code] = (i,j)
-            #BUG
             hash_frequency_dict[hash_code] +=1
 
     VISUALIZE = False
@@ -113,19 +112,22 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             hash_code = hash_function(input_padded[i:i+N,j:j+N,:])
             if(VISUALIZE):
                 debug_output[N:N+N,N:N+N] = input_padded[i:i+N,j:j+N,:]
+                cv_img(input_padded[i:i+N,j:j+N,:],id="input_padded")
                 print("====")
                 print(i,j)
                 print(i,i+N,j,j+N)
                 print("====")
                 show = input_padded.copy()
                 cv2.rectangle(show,(j,i),(j+N,i+N),(0,255,0),1)
-                cv2.rectangle(debug_output,(N,N),(N+N,N+N),(0,255,0),1)
+                #cv2.rectangle(debug_output,(N,N),(N+N,N+N),(0,255,0),1)
 
             for index,directions in enumerate(directions_list):
                 idx = (i+(directions[0]-1)*N)%input_padded.shape[0]
                 jdx = (j+(directions[1]-1)*N)%input_padded.shape[1]
                 adjacent_img = input_padded[idx:idx+N,jdx:jdx+N,:]
                 hash_code_adj = hash_function(adjacent_img)
+
+                #For the direction in valid_neighbours,append the adjacent hashcode
                 valid_neighbours[hash_code][index].append(hash_code_adj)
                 if(VISUALIZE):
                     #print(idx,jdx)
@@ -163,16 +165,39 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     #cropped_list = cropped_sets.reshape((input_img.shape[0]*input_img.shape[1],*cropped_sets.shape[2:]))
 
     #Brute force check all seen patterns
-    
-
-    for nei in valid_neighbours:
-        #get some unique neighbours
-        for i in range(len(directions)):
-            valid_neighbours[nei][i] = list(np.unique(valid_neighbours[nei][i]))
-
     def get_pattern(pattern_code):
         idx = hash_to_idx_dict[pattern_code]
         return cropped_sets[idx[0]][idx[1]]
+
+    VISUALIZE = False
+    adjacency_visualization_grid = np.zeros((N*9,N*9,3))    
+    for nei in valid_neighbours:
+        #get some unique neighbours
+        if(VISUALIZE==True):
+            adjacency_vis_list = []
+            adjacency_visualization_grid[N*3:N*6,N*3:N*6,:] = cv2.resize(get_pattern(nei),(N*3,N*3),interpolation=3)            
+        for i,direction in enumerate(directions_list):
+            valid_neighbours[nei][i] = list(np.unique(valid_neighbours[nei][i]))
+            if(VISUALIZE==True):
+                #For all the neighbours, put them in adjacency visualization grid,
+                adjacency_vis_list.append([])
+                for j in valid_neighbours[nei][i]:
+                    adjacency_vis_list[i].append(j)
+        if(VISUALIZE):
+            while(True):            
+                for i,direction in enumerate(directions_list):
+                    j = np.random.choice(adjacency_vis_list[i])
+                    adjacency_visualization_grid[direction[0]*N*3:direction[0]*N*3+N*3,direction[1]*N*3:direction[1]*N*3+N*3,:] = cv2.resize(get_pattern(j),(N*3,N*3),interpolation=3)
+                cv2.rectangle(adjacency_visualization_grid,(N*3,N*3),(N*6-1,N*6-1),(0,255,0),1)
+                cv_img(adjacency_visualization_grid,id="main")
+                k = cv2.waitKey(1)
+                if(k==ord('n')):
+                    break
+                elif(k==ord('q')):
+                    cv2.destroyAllWindows()
+                    exit()
+        cv2.destroyAllWindows()
+    
 
     def get_avg_color(hash_list):
         avg_color = np.zeros((3))
@@ -197,15 +222,20 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
 
     #For each block we have entropy + pattern
 
-    avg_color = get_avg_color(hash_to_idx_dict.keys())
-    output = [[len(hash_to_idx_dict)+random.random(),-1,list(hash_to_idx_dict.keys()),avg_color] for _ in range(output_size*output_size)]
-    output_img = np.ones((output_size*N,output_size*N,3))    
+    avg_color = get_avg_color(valid_neighbours.keys())
+    output = [[
+        len(valid_neighbours)+random.random(),
+        -1,
+        list(valid_neighbours.keys()),
+        avg_color] for _ in range(output_size*output_size)]
+    output_img = np.ones((output_size*N,output_size*N,3))
 
     #Begin by setting every entropy as all possible states
     #output is = [entropy,chosen_img_code,valid_patterns]
+    LARGE_NUM =  10000000000
     def observe(output):
         #find lowest entropy
-        if(output[np.argmin(np.array(output)[:,0])][0]==10000000):
+        if(output[np.argmin(np.array(output)[:,0])][0]==LARGE_NUM):
             return -1
         else:
             return np.argmin(np.array(output)[:,0])
@@ -218,74 +248,34 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             total_freq += 1/freq
         return prob_list / total_freq
 
-    VISUALIZE_ANIMATION = False
-    def collapse_wave_function(output,index,queue):
-        #Go to the index, choose a valid pattern
-        #Collapse the possible states of neighbours
-        #Choose a pattern based on frequency
-        #If there is no valid pattern to choose from, break and say oh no
-        #print(output[index][2])
-
+    
+    def collapse_wave_function(output,index):
+        #Collpase the current value of the next observed obj
         if(len(output[index][2])==0):
-            output[index][0] = 10000000
+            output[index][0] = LARGE_NUM
+            output[index][3] = np.array([255,0,0])
             return output
-            #output[index][2] = list(hash_to_idx_dict.keys())
-
-        probability_distribution = get_probs(output[index][2])
-        output[index][1] = np.random.choice(output[index][2],p=probability_distribution)
-        #output[index][1] = np.random.choice(output[index][2])
-
-        #Set entropy to 0
-        output[index][0] = 10000000
-        
-        #Collapse the subsequent wave functions
-        #up down left right
-        #up
-
-        #For each, update their valid patterns to only include the ones
-        #available in valid neighbours for the chosen index
-        if(VISUALIZE_ANIMATION):
-            valid_reps = np.zeros((3*N,3*N,3))
-            valid_reps[N:N+N,N:N+N,:] = get_pattern(output[index][1])
-        for i,direction_coord in enumerate(directions_list):
-            direction = (index-(direction_coord[0]-1)*output_size +(direction_coord[1]-1))%(output_size*output_size)
-
-            #if the direction is already set, we don't have to do anything
-            if(output[direction][0]==10000000):
-                continue
-            #output[index][1] is chosen pattern
-            #i is the direction 
-            #remember up-0 down-1 left-2 right-3 upleft-4 upright-5 downleft-6 downright-7
-            #For each direction, the valid moves are those which overlaps with the current allowed
-            #adjacencies to the chosen tile.
-            new_valid = valid_neighbours[output[index][1]][i]
-            #Get the valid neighbours to the direction of the chosen tile.
-            check = valid_neighbours[output[index][1]][i]
-            for item in list(hash_to_idx_dict.keys()):
-                if(item in check and item in output[index][2]):
-                    new_valid.append(item)
-            output[direction][2] = new_valid
-            if(VISUALIZE_ANIMATION):
-                if(len(check)>0):
-                    valid_reps[direction_coord[0]*N:direction_coord[0]*N+N,direction_coord[1]*N:direction_coord[1]*N+N,:] = get_pattern(check[0])
-                """
-                for iaa,valid in enumerate(new_valid):
-                    idx = hash_to_idx_dict[valid]
-                    cv_img(cropped_sets[idx],id=str(iaa))
-                cv_img(cropped_sets[hash_to_idx_dict[output[index][1]]],id="hi")
-                print(i)
-                cv2.waitKey(0)
-                """            
-            output[direction][0] = len(new_valid) +random.random()
-            #Update avg_color
-            output[direction][3] = get_avg_color(output[direction][2])
-            #queue.put(direction)
-        if(VISUALIZE_ANIMATION):
-            cv_img(valid_reps,id=str(random.random()))
-            cv2.waitKey(0)
+        output[index][1] = np.random.choice(output[index][2],p=get_probs(output[index][2]))
+        output[index][0] = LARGE_NUM
+        #propagate the constraint wave
+        #For all near states, propagate.
+        for i,direction in enumerate(directions_list):
+            near_idx = (index+(direction[0]-1)*output_size+(direction[1]-1))%len(output)
+            if(output[near_idx][0]!=LARGE_NUM):
+                #Limit the amount of possible states to be chosen based on output selected
+                new_valid = []
+                for item in valid_neighbours[output[index][1]][i]:
+                    if(item in output[near_idx][2]):
+                        new_valid.append(item)
+                #If there is only one choice, collapse immediately.
+                output[near_idx][2] = new_valid
+                #Set entropy to length of current possible states
+                output[near_idx][0] = len(new_valid)+random.random()
+                #Set average color
+                output[near_idx][3] = get_avg_color(output[near_idx][2])
         return output
-    from queue import Queue
-    queue = Queue()
+    #from queue import Queue
+    #queue = Queue()
     #queue.put(observe(output))
     while True:
         index = observe(output)
@@ -293,7 +283,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             done = True
         else:
             done = False
-        output = collapse_wave_function(output,index,queue)        
+        output = collapse_wave_function(output,index)        
         render_img(output,output_img,out)
         
         k = cv2.waitKey(1)
