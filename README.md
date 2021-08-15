@@ -1,7 +1,7 @@
 # COMPSCI 715 Group Project
 
 
-### Results (This is incorrect. See Bugs need fixing)
+### Results (Black Block indicates failed to solve constraint)
 
 Flower.png             |  Skyline.png           |  Platformer.png
 :-------------------------:|:-------------------------:|:-------------------------:
