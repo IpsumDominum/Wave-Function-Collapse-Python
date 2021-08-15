@@ -29,11 +29,13 @@ Example:
 python test.py --Flowers.png
 ```
 
-### Bugs need fixing
+### TODO
 
-1.Constraint 1 not satisfied. The adjacency relationship code is incorrect.
-
-2.Constraint 2 is not satisfied. The frequency for choosing the patterns is currently not reflecting global distributions well.
+1.Tile Based Satisfy constraint 1. (Done)
+2.Tile Based Satisfy constraint 2. (Done? Choosing each expansion with regards to a probability based on the frequency of the pattern's occurance)
+3.Overlap based
+4.Overlap Based Rotation and Symmetry.
+5.Tile Based Rotation and Symmetry.
 
 ### Results
 
