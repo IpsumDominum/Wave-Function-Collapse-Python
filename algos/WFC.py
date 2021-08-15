@@ -80,6 +80,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
         ((N,N),(N,N),(0,0)),
         "wrap"
     )
+
     #Get all subsets of these.
     for i in range(input_img.shape[0]):
         for j in range(input_img.shape[1]):
@@ -87,8 +88,8 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             hash_code = hash_function(input_padded[i:i+N,j:j+N])
             cropped_list.append(hash_code)
             hash_to_idx_dict[hash_code] = (i,j)
-            hash_frequency_dict[hash_code] +=1
-            
+            hash_frequency_dict[hash_code] += 1
+
     #Do some testing
     #One : Ensure that all patterns are unique
     TEST = False
@@ -181,6 +182,8 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             valid_neighbours[nei] = np.unique(valid_neighbours[nei])
         #for i in valid_neighbours[nei]:
     """
+    print("pattern extraction complete")
+
     def get_pattern(pattern_code):
         idx = hash_to_idx_dict[pattern_code]
         return cropped_sets[idx[0]][idx[1]]
@@ -207,10 +210,10 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
         cv_img(output_img)
 
     #For each block we have entropy + pattern
-
+    # Initialising output
     avg_color = get_avg_color(hash_to_idx_dict.keys())
-    output = [[len(hash_to_idx_dict)+random.random(),-1,list(hash_to_idx_dict.keys()),avg_color] for _ in range(output_size*output_size)]
-    output_img = np.ones((output_size*N,output_size*N,3))    
+    output = [[len(hash_to_idx_dict.keys()),-1,list(hash_to_idx_dict.keys()),avg_color] for _ in range(output_size*output_size)]
+    output_img = np.ones((output_size*N,output_size*N,3))
 
     #Begin by setting every entropy as all possible states
     #output is = [entropy,chosen_img_code,valid_patterns]
@@ -220,6 +223,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             return -1
         else:
             return np.argmin(np.array(output)[:,0])
+
     def get_probs(code_list):
         prob_list = np.zeros((len(code_list)))
         total_freq = 0
@@ -316,6 +320,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             output[direction][3] = get_avg_color(output[direction][2])
             #queue.put(direction)
         return output
+
     from queue import Queue
     queue = Queue()
     #queue.put(observe(output))
