@@ -118,7 +118,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
                     cv2.destroyAllWindows()
                     exit()
     print("EXTRACTING ADJACENCY...")
-    VISUALIZE = False
+    VISUALIZE = True
     #EXTRACT ADJACENCY
     for i in range(math.ceil((input_shape_i-N)//N)+2):
         for j in range(math.ceil((input_shape_j-N)//N)+2):

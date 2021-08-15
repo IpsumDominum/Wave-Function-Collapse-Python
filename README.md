@@ -3,9 +3,10 @@
 
 ### Results (Blue Block indicates failed to solve constraint)
 
-Flower.png             |  Skyline.png           |  
+Flower.png             |  Skyline.png           |    Spirals.png           |  
 :-------------------------:|:-------------------------:|
-![Flower](./gifs/Flowers_speedup.gif) |![Skyline](./gifs/Skyline_speedup.gif) |
+![Flower](./gifs/Flowers_speedup.gif) |![Skyline](./gifs/Skyline_speedup.gif) |![Spirals](./gifs/Spirals_speedup.gif)
+
 
 Random Pixel Dungeon Photo | Random Pixel Dungeon Photo Result
 :-------------------------:|:-------------------------:
@@ -39,6 +40,7 @@ Example:
 ```bash
 python test.py --Flowers.png
 ```
+
 
 ### TODO
 
