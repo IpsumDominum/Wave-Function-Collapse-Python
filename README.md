@@ -38,7 +38,7 @@ python test.py --Flowers.png
 
 ### Bugs need fixing
 
-1.Constraint 1 not satisfied. The adjacency relationship code is incorrect.
+1.When a tile runs out of valid pattern to put in, the option resets itself. Added a print statement for when this happens, may need to backtrack.
 
 2.Constraint 2 is not satisfied. The frequency for choosing the patterns is currently not reflecting global distributions well.
 
