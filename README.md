@@ -5,11 +5,11 @@
 
 Flower.png             |  Skyline.png           |  
 :-------------------------:|:-------------------------:|
-![Flower](./gifs/Flowers_speedup.png.gif) |![Skyline](./gifs/Skyline_speedup.png.gif) |
+![Flower](./gifs/Flowers_speedup.gif) |![Skyline](./gifs/Skyline_speedup.gif) |
 
 Random Pixel Dungeon Photo | Random Pixel Dungeon Photo Result
 :-------------------------:|:-------------------------:
-![PixelDungeon](./samples/test.jpg)|![PixelDungeon](./gifs/test_speedup.jpg.gif)
+![PixelDungeon](./samples/test.jpg)|![PixelDungeon](./gifs/test_speedup.gif)
 
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
