@@ -4,7 +4,7 @@
 ### Results (Blue Block indicates failed to solve constraint)
 
 Flower.png             |  Skyline.png           |    Spirals.png           |  
-:-------------------------:|:-------------------------:|
+:-------------------------:|:-------------------------:|:-------------------------:|
 ![Flower](./gifs/Flowers_speedup.gif) |![Skyline](./gifs/Skyline_speedup.gif) |![Spirals](./gifs/Spirals_speedup.gif)
 
 
