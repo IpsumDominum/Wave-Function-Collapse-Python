@@ -212,7 +212,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     #For each block we have entropy + pattern
     # Initialising output
     avg_color = get_avg_color(hash_to_idx_dict.keys())
-    output = [[len(hash_to_idx_dict.keys()),-1,list(hash_to_idx_dict.keys()),avg_color] for _ in range(output_size*output_size)]
+    output = [[len(hash_to_idx_dict.keys())+random.random()/100,-1,list(hash_to_idx_dict.keys()),avg_color] for _ in range(output_size*output_size)]
     output_img = np.ones((output_size*N,output_size*N,3))
 
     #Begin by setting every entropy as all possible states
@@ -240,6 +240,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
         #If there is no valid pattern to choose from, break and say oh no
         #print(output[index][2])
         if(len(output[index][2])==0):
+            print("no more available output for at index", index)
             output[index][2] = list(hash_to_idx_dict.keys())
         probability_distribution = get_probs(output[index][2])
         output[index][1] = np.random.choice(output[index][2],p=probability_distribution)
@@ -315,7 +316,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
             cv2.waitKey(0)
             """
             output[direction][2] = new_valid
-            output[direction][0] = len(new_valid) +random.random()
+            output[direction][0] = len(new_valid) - random.random()/100
             #Update avg_color
             output[direction][3] = get_avg_color(output[direction][2])
             #queue.put(direction)
@@ -333,7 +334,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
         output = collapse_wave_function(output,index,queue)        
         render_img(output,output_img,out)
         k = cv2.waitKey(1)
-        if(k==ord('q') or done==True):            
+        if(k==ord('q') or done==True):
             break
     if(write_output):
         out.release()        
