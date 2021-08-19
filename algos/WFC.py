@@ -89,7 +89,6 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     cropped_sets = np.zeros((*input_padded.shape[:2],N,N,channels))
     #Get all subsets of these.
     #Non overlapping tiles
-
     
     unique_patterns = []
     valid_neighbours = defaultdict(lambda:[[],[],[],[],[],[],[],[]])
@@ -118,7 +117,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
                     cv2.destroyAllWindows()
                     exit()
     print("EXTRACTING ADJACENCY...")
-    VISUALIZE = True
+    VISUALIZE = False
     #EXTRACT ADJACENCY
     for i in range(math.ceil((input_shape_i-N)//N)+2):
         for j in range(math.ceil((input_shape_j-N)//N)+2):
@@ -156,7 +155,6 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
                 if(k==ord('q')):
                     cv2.destroyAllWindows()
                     exit()
-
     #Do some testing
     #One : Ensure that all patterns are unique
     TEST = False
@@ -238,7 +236,6 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
         cv_img(output_img)
 
     #For each block we have entropy + pattern
-
     avg_color = get_avg_color(valid_neighbours.keys())
     output = [[
         len(valid_neighbours)+random.random(),

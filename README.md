@@ -3,14 +3,16 @@
 
 ### Results (Blue Block indicates failed to solve constraint)
 
+#### Tile Based (Adjacency extracted from input image relationships)
+
 Flower.png             |  Skyline.png           |    Spirals.png           |  
 :-------------------------:|:-------------------------:|:-------------------------:|
 ![Flower](./gifs/Flowers_speedup.gif) |![Skyline](./gifs/Skyline_speedup.gif) |![Spirals](./gifs/Spirals_speedup.gif)
 
-
-Random Pixel Dungeon Photo | Random Pixel Dungeon Photo Result
-:-------------------------:|:-------------------------:
-![PixelDungeon](./samples/test.jpg)|![PixelDungeon](./gifs/test_speedup.gif)
+#### Overlap Based (Needs fixing...)
+Flower.png             |  Skyline.png           |    Cat.png           |  Red Maze.png           |  
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
+![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Spirals](./gifs/Cat.png.gif)|![Red Maze](./gifs/Red Maze.png.gif)
 
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
