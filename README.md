@@ -12,7 +12,7 @@ Flower.png             |  Skyline.png           |    Spirals.png           |
 #### Overlap Based (Needs fixing...)
 Flower.png             |  Skyline.png           |    Cat.png           |  Red Maze.png           |  
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
-![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Spirals](./gifs/Cat.png.gif)|![Red Maze](./gifs/Red Maze.png.gif)
+![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Spirals](./gifs/Cat.png.gif)|![Red Maze](./gifs/RedMaze.png.gif)
 
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
