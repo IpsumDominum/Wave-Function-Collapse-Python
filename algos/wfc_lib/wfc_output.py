@@ -48,14 +48,19 @@ def propagate(output_matrix,avg_color_set,adjacency_matrices,code_frequencies):
     #Shifted array and the valid adjacency
     directions_list = [(0,-1),(0,1),(-1,0),(1,0),(-1,-1),(1,-1),(-1,1),(1,1)]
     #directions_list = [(0,-1),(0,1),(-1,0),(1,0)]
+    directions_list = [(0,-1),(0,1),(-1,0),(1,0),(-1,-1),(1,-1),(-1,1),(1,1)]
+    support = {}
     padded = np.pad(output_matrix["valid_states"],((0,0),(1,1),(1,1)),"constant",constant_values=True)
+    #Compute based on the current valid states, the neighbour's valid states.
+    #Hence propagate the constraint wave.
     for direction in directions_list:
         dy,dx = direction
         shifted = padded[:,1+dy:1+dy+output_matrix["valid_states"].shape[1],
                         1+dx:1+dx+output_matrix["valid_states"].shape[2]]
-        support = (adjacency_matrices[direction] @ shifted.reshape(shifted.shape[0],-1)).reshape(shifted.shape)>0
+        support[direction] = (adjacency_matrices[direction] @ shifted.reshape(shifted.shape[0],-1)).reshape(shifted.shape)>0
         #Update output_matrix valid states
-        output_matrix["valid_states"] *= support
+    for direction in directions_list:
+        output_matrix["valid_states"] *= support[direction]
 
     #Update new entropy for the matrix based on current available states
     for i in range(output_matrix["entropy"].shape[0]):

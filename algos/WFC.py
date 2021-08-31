@@ -116,6 +116,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
                 if(k==ord('q')):
                     cv2.destroyAllWindows()
                     exit()
+    
     print("EXTRACTING ADJACENCY...")
     VISUALIZE = False
     #EXTRACT ADJACENCY

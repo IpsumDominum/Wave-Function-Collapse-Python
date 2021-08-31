@@ -19,9 +19,9 @@ except IndexError:
 
 item_img = cv2.imread(os.path.join(image_dir,img_name))
 
-
 try:
-    wfc_overlap_run(item_img,2,20,output_name=img_name,GROUND=False,WRITE_VIDEO=True)
+    wfc_overlap_run(item_img,3,20,output_name=img_name)
+    #wfc_run(item_img,2,20,output_name=img_name,write_output=False)
 except AttributeError as e:
     print("==========================================")
     print("image "+img_name + " not found in ./samples")

@@ -11,7 +11,7 @@ from algos.wfc_lib.wfc_utils import (hash_function,
                 cv_write,
                 cv_img,cv_wait,
                 get_hash_to_code)
-def visualize_adjacency(image,image2,dy,dx,N,match):
+def visualize_adjacency(image,image2,dy,dx,N,match,sliced2,sliced):
     padded = np.pad(image,((1,1),(1,1),(0,0)),"constant",constant_values=(30))
     padded2 = np.pad(image2,((1,1),(1,1),(0,0)),"constant",constant_values=(30))
     show = cv2.resize(padded.copy(),(512,512),interpolation=3)/255
@@ -20,7 +20,12 @@ def visualize_adjacency(image,image2,dy,dx,N,match):
     show2 = cv2.resize(padded2.copy(),(512,512),interpolation=3)/255
     cv2.rectangle(show2,((1-dx)*512//(N+2),(1-dy)*512//(N+2)),( (1+N-dx)*512//(N+2),(1+N-dy)*512//(N+2)),(0,255,0),10)
     overlay = padded.copy()
-    overlay[1+dy:1+dy+N,1+dx:1+dx+N] = sliced2
+    if(sliced2.shape==(3,2,3)):
+        overlay[1+dy:1+dy+N,1+dx:1+dx+N-1] = sliced2
+    elif(sliced2.shape==(2,2,3)):
+        overlay[1+dy:1+dy+N-1,1+dx:1+dx+N-1] = sliced2
+    elif(sliced2.shape==(2,3,3)):
+        overlay[1+dy:1+dy+N-1,1+dx:1+dx+N-1] = sliced2
     overlay = cv2.resize(overlay,(512,512),interpolation=3)/255
     if(match==True):
         color = (255,0,0)
@@ -60,7 +65,7 @@ def extract_adjacency(hash_to_code_dict,pattern_set,N,VISUALIZE=False):
                     adjacency_list[direction].append((hash_to_code_dict[item],hash_to_code_dict[item2]))
                 #Slice the overlapping region of the two images to compare, and check if the overlap is the same.
                 if(VISUALIZE):
-                    visualize_adjacency(image,image2,dy,dx,N,match)
+                    visualize_adjacency(image,image2,dy,dx,N,match,sliced2,sliced)
     return adjacency_list
 def write_adjacency_visualize(adjacency_list,pattern_code_set):
     if(os.path.isdir(os.path.join("vis","adjacency"))):

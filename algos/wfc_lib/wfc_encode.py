@@ -29,7 +29,7 @@ def get_encoded_patterns(input_img,N,VISUALIZE=False,GROUND=False,WRITE=False):
     pattern_set = {}
     hash_frequency_dict = defaultdict(lambda:0)
 
-    PAD = 1
+    PAD = 0
     input_padded = np.pad(
         input_img,
         ((PAD,PAD),(PAD,PAD),(0,0)),
@@ -47,11 +47,13 @@ def get_encoded_patterns(input_img,N,VISUALIZE=False,GROUND=False,WRITE=False):
                     hash_code = hash_function(transformed)
                     pattern_set[hash_code] = transformed
                     hash_frequency_dict[hash_code] +=1
-
+            hash_code = hash_function(cropped_pattern)
+            pattern_set[hash_code] = cropped_pattern
+            hash_frequency_dict[hash_code] +=1
             if(i==input_padded.shape[0]-N and GROUND and j <N): 
-                hash_code = hash_function(cropped_pattern)
-                pattern_set[hash_code] = cropped_pattern
-                hash_frequency_dict[hash_code] +=1
+                #hash_code = hash_function(cropped_pattern)
+                #pattern_set[hash_code] = cropped_pattern
+                #hash_frequency_dict[hash_code] +=1
                 ground[j] = hash_code
 
             if(VISUALIZE):
