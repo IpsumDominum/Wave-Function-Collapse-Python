@@ -21,7 +21,7 @@ def cv_img(img,resize=True,wait=True,id=str(random.random())):
 def write_img(img,out,resize=True,wait=True,id=str(random.random())):
     if(resize):
         img = cv2.resize(img,(512,512))
-    out.write(img.astype(np.uint8))    
+    out.write(img.astype(np.uint8))
 
 def img_equal(img1,img2):
     for i in range(img1.shape[0]):
@@ -49,7 +49,7 @@ def is_same_pattern(pattern1,pattern2):
     return False        
     
 def hash_function(img,random_state=0):
-    #HASH FUNCTION FROM  Isaac Karth implementation (Modified)
+    #HASH FUNCTION FROM Isaac Karth implementation (Modified)
     state = np.random.RandomState(random_state)
     u = img.reshape(
         np.array(np.prod(img.shape), dtype=np.int64)
@@ -59,6 +59,9 @@ def hash_function(img,random_state=0):
 
 
 def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_video.avi"):
+    ROW = 0
+    COL = 1
+
     if(write_output):
         frame_width = 512
         frame_height = 512
@@ -79,49 +82,72 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     cropped_list = []
     hash_to_idx_dict = {}
     hash_frequency_dict = defaultdict(lambda:0)
-    PAD = 2*N
+    PAD = 2*N                                               #TODO: pad could be causing problems
     input_padded = np.pad(
         input_img,
         ((PAD,PAD),(PAD,PAD),(0,0)),
         "wrap"
     )
+    pad_row = input_padded.shape[0]
+    pad_col = input_padded.shape[1]
 
     cropped_sets = np.zeros((*input_padded.shape[:2],N,N,channels))
-    #Get all subsets of these.
-    #Non overlapping tiles
     
     unique_patterns = []
     valid_neighbours = defaultdict(lambda:[[],[],[],[],[],[],[],[]])
     seen_patterns = []
     debug_output = np.zeros((N*3,N*3,3))
-    directions_list = [(1,0),(1,2),(0,1),(2,1),(0,0),(2,0),(0,2),(2,2)]
+    directions_list = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (1, -1), (-1, 1), (1, 1)]
 
     import math
     VISUALIZE = False
     print("ENCODING...")
     #ENCODE EVERYTHING
-    for i in range(math.ceil((input_padded.shape[0]-N)//N)+1):
-        for j in range(math.ceil((input_padded.shape[1]-N)//N)+1):
-            crop_img = input_padded[i*N:(i+1)*N,j*N:(j+1)*N,:]
+    for i in range(math.ceil((pad_row-N))):
+        for j in range(math.ceil((pad_col-N))):
+            crop_img = input_padded[i:i+N, j:j+N, :]
             cropped_sets[i][j][:] = crop_img
             hash_code = hash_function(crop_img)
             cropped_list.append(hash_code)
             hash_to_idx_dict[hash_code] = (i,j)
-            hash_frequency_dict[hash_code] +=1
+            hash_frequency_dict[hash_code] += 1
+
             if(VISUALIZE):
                 show = input_padded.copy()
-                cv2.rectangle(show,(j*N,i*N),((j+1)*N,(i+1)*N),(0,255,0),1)
+                cv2.rectangle(show,(j,i),((j+N),(i+N)),(0,255,0),1)
                 cv_img(show)
                 k = cv2.waitKey(0)
                 if(k==ord('q')):
                     cv2.destroyAllWindows()
                     exit()
+
+    # # non overlapping crop img sets
+    # for i in range(math.ceil((input_col-N)//N)+1):
+    #     for j in range(math.ceil((input_row-N)//N)+1):
+    #         crop_img = input_padded[i*N:(i+1)*N,j*N:(j+1)*N,:]
+    #         cropped_sets[i][j][:] = crop_img
+    #         hash_code = hash_function(crop_img)
+    #         cropped_list.append(hash_code)
+    #         hash_to_idx_dict[hash_code] = (i,j)
+    #         hash_frequency_dict[hash_code] += 1
+    #         if(VISUALIZE):
+    #             show = input_padded.copy()
+    #             cv2.rectangle(show,(j*N,i*N),((j+1)*N,(i+1)*N),(0,255,0),1)
+    #             cv_img(show)
+    #             k = cv2.waitKey(0)
+    #             if(k==ord('q')):
+    #                 cv2.destroyAllWindows()
+    #                 exit()
+
+
+
     print("EXTRACTING ADJACENCY...")
     VISUALIZE = False
     #EXTRACT ADJACENCY
     for i in range(math.ceil((input_shape_i-N)//N)+2):
         for j in range(math.ceil((input_shape_j-N)//N)+2):
-            crop_img = input_padded[(i)*N+PAD:(i+1)*N+PAD,(j)*N+PAD:(j+1)*N+PAD,:]
+            # crop_img = input_padded[(i)*N+PAD:(i+1)*N+PAD,(j)*N+PAD:(j+1)*N+PAD,:]
+            crop_img = input_padded[(i)+PAD:(i+N)+PAD, (j)+PAD:(j+N)+PAD, :]
             hash_code = hash_function(crop_img)
             if(VISUALIZE):
                 debug_output[N:N+N,N:N+N] = crop_img
@@ -135,8 +161,10 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
                 #cv2.rectangle(debug_output,(N,N),(N+N,N+N),(0,255,0),1)
 
             for index,directions in enumerate(directions_list):
-                idx = (i*N+PAD+(directions[0]-1)*N)%input_padded.shape[0]
-                jdx = (j*N+PAD+(directions[1]-1)*N)%input_padded.shape[1]
+                idx = (i+PAD+(directions[ROW])*N)%pad_row
+                jdx = (j+PAD+(directions[COL])*N)%pad_col
+                # idx = (i + PAD + (directions[ROW]) * N) % pad_row
+                # jdx = (j + PAD + (directions[COL]) * N) % pad_col
                 adjacent_img = input_padded[idx:idx+N,jdx:jdx+N,:]
                 hash_code_adj = hash_function(adjacent_img)
 
@@ -155,6 +183,41 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
                 if(k==ord('q')):
                     cv2.destroyAllWindows()
                     exit()
+
+    # # code for non overlapping extraction
+    # for i in range(math.ceil((input_shape_i-N)//N)+2):
+    #     for j in range(math.ceil((input_shape_j-N)//N)+2):
+    #         # crop_img = input_padded[(i)*N+PAD:(i+1)*N+PAD,(j)*N+PAD:(j+1)*N+PAD,:]
+    #         crop_img = input_padded[(i)+PAD:(i+N)+PAD, (j)+PAD:(j+N)+PAD, :]
+    #         hash_code = hash_function(crop_img)
+    #         if(VISUALIZE):
+    #             debug_output[N:N+N,N:N+N] = crop_img
+    #             cv_img(crop_img,id="input_padded")
+    #             print("====  ")
+    #             print(i,j)
+    #             print(i,i+N,j,j+N)
+    #             print("====")
+    #             show = input_padded.copy()
+    #             cv2.rectangle(show,(j*N+PAD,i*N+PAD),((j+1)*N+PAD,(i+1)*N+PAD),(0,255,0),1)
+    #             #cv2.rectangle(debug_output,(N,N),(N+N,N+N),(0,255,0),1)
+    #
+    #         for index,directions in enumerate(directions_list):
+    #             # idx = (i*N+PAD+(directions[0]-1)*N)%pad_row
+    #             # jdx = (j*N+PAD+(directions[1]-1)*N)%pad_col
+    #             idx = (i + PAD + (directions[ROW] - 1) * N) % pad_row
+    #             jdx = (j + PAD + (directions[COL] - 1) * N) % pad_col
+    #             adjacent_img = input_padded[idx:idx+N,jdx:jdx+N,:]
+    #             hash_code_adj = hash_function(adjacent_img)
+    #
+    #             #For the direction in valid_neighbours,append the adjacent hashcode
+    #             valid_neighbours[hash_code][index].append(hash_code_adj)
+    #             if(VISUALIZE):
+    #                 #print(idx,jdx)
+    #                 #print(input_padded.shape)
+    #                 #print(idx,idx+N,jdx,jdx+N)
+    #                 debug_output[directions[0]*N:directions[0]*N+N,directions[1]*N:directions[1]*N+N] = adjacent_img
+
+
     #Do some testing
     #One : Ensure that all patterns are unique
     TEST = False
