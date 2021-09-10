@@ -3,6 +3,7 @@ import cv2
 import random
 import math
 from collections import defaultdict
+from wfc_global_constraints import adj_global_constr
 import os
 from tqdm import tqdm
 from algos.wfc_lib.wfc_utils import (hash_function,
@@ -60,7 +61,9 @@ def extract_adjacency(hash_to_code_dict,pattern_set,N,VISUALIZE=False):
                 sliced = image[max(dy,0):N+min(dy,0):,max(dx,0):N+min(dx,0)]
                 sliced2 = image2[-min(dy,0):N-max(dy,0),-min(dx,0):N-max(dx,0)]
                 match = False
-                if(img_equal(sliced,sliced2)):
+                global_constr_match = True
+                global_constr_match = adj_global_constr(sliced, sliced2)
+                if(img_equal(sliced,sliced2) and global_constr_match):
                     match = True
                     adjacency_list[direction].append((hash_to_code_dict[item],hash_to_code_dict[item2]))
                 #Slice the overlapping region of the two images to compare, and check if the overlap is the same.
