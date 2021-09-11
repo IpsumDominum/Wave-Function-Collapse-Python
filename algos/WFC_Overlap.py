@@ -16,6 +16,7 @@ from algos.wfc_lib.wfc_encode import (get_encoded_patterns)
 from algos.wfc_lib.wfc_adjacency import (extract_adjacency,build_adjacency_matrix)
 from algos.wfc_lib.wfc_output import (build_output_matrix,observe,propagate,render,pad_ground)
 from algos.wfc_lib.wfc_backtrack import update_queue
+from algos.wfc_lib.wfc_global_constraints import final_global_constr
 """
 Sample over NxN crops of Input image, to create selection array
 for output, each grid selects out of random one of the selection array membe
@@ -53,6 +54,8 @@ def wfc_overlap_run_backtrack(input_img,N=3,output_size=32,output_name="out_vide
         if(k==ord('q')):
             break
         #if done: exit()
+    final_constraints_satisfied = final_global_constr(output_matrix)
+    print(final_constraints_satisfied)  #If false, we can observe why and re-run mannually
     cv2.destroyAllWindows()
     if(WRITE_VIDEO):imageio.mimsave(os.path.join("wfc_outputs",output_name+".gif"),video_out)
 
