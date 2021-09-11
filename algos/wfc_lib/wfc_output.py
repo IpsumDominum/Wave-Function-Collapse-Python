@@ -2,6 +2,7 @@ import numpy as np
 import numpy.ma as ma
 from algos.wfc_lib.wfc_utils import (cv_img,cv_wait,cv_write)
 from algos.wfc_lib.wfc_backtrack import backtrack_memory, update_queue
+from algos.wfc_lib.wfc_global_constraints import matrix_global_constr
 import random
 import imageio
 
@@ -49,6 +50,7 @@ def observe(output_matrix,pattern_code_set,hash_frequency_dict,code_frequencies,
     output_matrix["valid_states"][:,array_index[0],array_index[1]] = False
     output_matrix["valid_states"][chosen_idx,array_index[0],array_index[1]] = True
     output_matrix["timestep"][array_index[0], array_index[1]] = timestep
+    output_matrix = matrix_global_constr(output_matrix)      # checks if observed matrix satisfies the global constraints
     return (done,output_matrix, timestep, backtrack_queue) if chosen_idx != -1 else (True,output_matrix, timestep, backtrack_queue)
 def propagate(output_matrix,avg_color_set,adjacency_matrices,code_frequencies):
     #Elegant global propagation, reference to Issac Karth Implementation
