@@ -11,7 +11,7 @@ def adj_global_constr(sliced, sliced2):
 # matrix  constraints eg. "There can only be one moon, so once moon generated, cancel all moon tile adjacencies"
 def matrix_global_constr(output_matrix):
     # add output_matrix level constraints here
-    return None
+    return output_matrix
 
 
 # Takes in the finalised output matrix, checks to see if it satisfies finalised-level global constraints
