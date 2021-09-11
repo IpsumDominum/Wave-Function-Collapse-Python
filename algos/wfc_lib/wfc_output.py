@@ -1,6 +1,8 @@
 import numpy as np
 import numpy.ma as ma
 from algos.wfc_lib.wfc_utils import (cv_img,cv_wait,cv_write)
+from algos.wfc_lib.wfc_backtrack import backtrack_memory, update_queue
+from algos.wfc_lib.wfc_global_constraints import matrix_global_constr
 import random
 import imageio
 
@@ -17,31 +19,39 @@ def build_output_matrix(pattern_num,output_size):
     output_matrix_colors = np.zeros((output_size,output_size,3))
     output_matrix_entropy = np.random.rand(output_size,output_size,1) + pattern_num
     output_matrix_chosen_states = np.ones((output_size,output_size,1),dtype=np.int64) * -1
+    output_matrix_timestep = np.ones((output_size, output_size, 1), dtype=np.int64) * 0
     output_matrix = {
         "valid_states": output_matrix_valid_states,
         "colors":output_matrix_colors,
         "entropy":output_matrix_entropy,
         "chosen_states": output_matrix_chosen_states,
+        "timestep": output_matrix_timestep,
     }
     return output_matrix
 def get_probs(frequency_list):
     return (frequency_list / np.sum(frequency_list))
-def observe(output_matrix,pattern_code_set,hash_frequency_dict,code_frequencies):    
+def observe(output_matrix,pattern_code_set,hash_frequency_dict,code_frequencies, timestep, backtrack_queue):
+    timestep += 1
     least_entropy_flat_index = np.argmin(output_matrix["entropy"])
     global prev
     array_index = np.unravel_index(least_entropy_flat_index,output_matrix["entropy"].shape[:2])
-    done = True if(output_matrix["entropy"][array_index[0],array_index[1]]== LARGE_NUMBER or 
-                   output_matrix["entropy"][array_index[0],array_index[1]]<1) else False    
+    done = True if(output_matrix["entropy"][array_index[0],array_index[1]] == LARGE_NUMBER or
+                   output_matrix["entropy"][array_index[0],array_index[1]]<1) else False
     #output_matrix["entropy"][array_index[0],array_index[1]] = LARGE_NUMBER
     #Collapse the Wave Function for this block here.
     #Choose from all the possible states based on adjacency constraint
     valid_states_list = np.array(list(pattern_code_set.keys()))[output_matrix["valid_states"][:,array_index[0],array_index[1]]>0]
+    if len(valid_states_list) == 0:
+        backtrack_memory(output_matrix, backtrack_queue)
+    backtrack_queue = update_queue(backtrack_queue, output_matrix)
     p = get_probs(code_frequencies[output_matrix["valid_states"][:,array_index[0],array_index[1]]>0])
     chosen_idx = np.random.choice(valid_states_list,p=p) if len(valid_states_list)>0 else -1
     output_matrix["chosen_states"][array_index[0],array_index[1]] = chosen_idx
     output_matrix["valid_states"][:,array_index[0],array_index[1]] = False
     output_matrix["valid_states"][chosen_idx,array_index[0],array_index[1]] = True
-    return (done,output_matrix) if chosen_idx != -1 else (True,output_matrix)
+    output_matrix["timestep"][array_index[0], array_index[1]] = timestep
+    output_matrix = matrix_global_constr(output_matrix)      # checks if observed matrix satisfies the global constraints
+    return (done,output_matrix, timestep, backtrack_queue) if chosen_idx != -1 else (True,output_matrix, timestep, backtrack_queue)
 def propagate(output_matrix,avg_color_set,adjacency_matrices,code_frequencies):
     #Elegant global propagation, reference to Issac Karth Implementation
     #For each direction, get the supports as matrix multiplication of the 
