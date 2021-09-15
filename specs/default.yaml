@@ -1,0 +1,13 @@
+##########################
+Flowers.png:
+  OUTPUT_SIZE: 32
+  N : 3
+  VISUALIZE_Encode: False
+  VISUALIZE_ADJACENCY: False
+  WRITE : False
+  WRITE_VIDEO : False
+  GROUND : True
+##########################
+Skyline.png:
+  GROUND : False
+  
