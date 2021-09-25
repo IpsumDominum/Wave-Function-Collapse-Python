@@ -9,6 +9,7 @@ from sys import argv
 image_dir = os.path.join("samples")
 try:
     # img_name = argv[1]    
+    # img_name = "mooncity2.png"
     img_name = "Flowers.png"
     
 except IndexError:

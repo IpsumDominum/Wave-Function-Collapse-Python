@@ -3,6 +3,17 @@
 # adjacency constraints eg. "beside each fully white tile, you cannot have blue pixels"
 def adj_global_constr(sliced, sliced2):
     # add adjacency level constraints here
+
+    # 26/09
+    # sliced:  [[[r, g, b], [r, g, b]], 
+    #           [[r, g, b], [r, g, b]],
+    #           [[r, g, b], [r, g, b]]]  shape = (3, 2, 3) = (#rows, #col, #rgb)
+    # sometimes does (2, 2, 3)
+
+    # assuming (3, 3, 3)
+    
+    
+
     return True
 
 # Takes in the current output matrix, checks to see if the adjacency needs any changes
