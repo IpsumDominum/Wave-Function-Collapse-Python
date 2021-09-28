@@ -29,25 +29,26 @@ def visualize_adjacency(image, image2, dy, dx, N, match, sliced2, sliced):
     )
     # Slice opposite side of image
     show2 = cv2.resize(padded2.copy(), (512, 512), interpolation=3) / 255
-    cv2.rectangle(
-        show2,
-        ((1 - dx) * 512 // (N + 2), (1 - dy) * 512 // (N + 2)),
-        ((1 + N - dx) * 512 // (N + 2), (1 + N - dy) * 512 // (N + 2)),
-        (0, 255, 0),
-        10,
-    )
     overlay = padded.copy()
     if sliced2.shape == (3, 2, 3):
         overlay[1 + dy : 1 + dy + N, 1 + dx : 1 + dx + N - 1] = sliced2
     elif sliced2.shape == (2, 2, 3):
         overlay[1 + dy : 1 + dy + N - 1, 1 + dx : 1 + dx + N - 1] = sliced2
     elif sliced2.shape == (2, 3, 3):
-        overlay[1 + dy : 1 + dy + N - 1, 1 + dx : 1 + dx + N - 1] = sliced2
+        overlay[1 + dy : 1 + dy + N - 1, 1 + dx : 1 + dx + N] = sliced2
     overlay = cv2.resize(overlay, (512, 512), interpolation=3) / 255
     if match == True:
         color = (255, 0, 0)
     else:
         color = (0, 0, 255)
+
+    cv2.rectangle(
+        show2,
+        ((1 - dx) * 512 // (N + 2), (1 - dy) * 512 // (N + 2)),
+        ((1 + N - dx) * 512 // (N + 2), (1 + N - dy) * 512 // (N + 2)),
+        color,
+        10,
+    )
     cv2.rectangle(
         overlay,
         ((1) * 512 // (N + 2), (1) * 512 // (N + 2)),
@@ -68,23 +69,12 @@ def visualize_adjacency(image, image2, dy, dx, N, match, sliced2, sliced):
         exit()
 
 
-def extract_adjacency(hash_to_code_dict, pattern_set, N, VISUALIZE=False):
+def extract_adjacency(hash_to_code_dict, pattern_set, N, directions_list,VISUALIZE=False):
     adjacency_list = defaultdict(lambda: [])
-    directions_list = [
-        (0, -1),
-        (0, 1),
-        (-1, 0),
-        (1, 0),
-        (-1, -1),
-        (1, -1),
-        (-1, 1),
-        (1, 1),
-    ]
-    directions_list = [(0,-1),(0,1),(-1,0),(1,0)]
     # EXTRACT ADJACENCY
     # For all of the tiles, create a list of toleratable overlap adjacencies.
     for item in tqdm(pattern_set.keys()):
-        image = pattern_set[item]
+        image = pattern_set[item]        
         # For every other item, see if the overlap is OK
         for item2 in pattern_set.keys():
             image2 = pattern_set[item2]
@@ -106,10 +96,32 @@ def extract_adjacency(hash_to_code_dict, pattern_set, N, VISUALIZE=False):
                 # Slice the overlapping region of the two images to compare, and check if the overlap is the same.
                 if VISUALIZE:
                     visualize_adjacency(
-                        image, image2, dy, dx, N, match, sliced2, sliced
+                    image, image2, dy, dx, N, match, sliced2, sliced
                     )
     return adjacency_list
-
+def extract_adjacency_from_image(input_img,hash_to_code_dict, pattern_set, N, directions_list,VISUALIZE=False):
+    # EXTRACT ADJACENCY FROM IMAGE
+    adjacency_list = defaultdict(lambda: [])
+    input_shape_i = input_img.shape[0]
+    input_shape_j = input_img.shape[1]
+    PAD = 0
+    input_padded = np.pad(input_img, ((PAD, PAD), (PAD, PAD), (0, 0)), "wrap")
+    for i in range(math.ceil((input_shape_i - N) // N) + 2):
+        for j in range(math.ceil((input_shape_j - N) // N) + 2):
+            crop_img = input_padded[
+                (i) * N + PAD : (i + 1) * N + PAD, (j) * N + PAD : (j + 1) * N + PAD, :
+            ]
+            hash_code = hash_function(crop_img)
+            for index, directions in enumerate(directions_list):
+                idx = (i * N + PAD + (directions[0] - 1) * N) % input_padded.shape[0]
+                jdx = (j * N + PAD + (directions[1] - 1) * N) % input_padded.shape[1]
+                adjacent_img = input_padded[idx : idx + N, jdx : jdx + N, :]
+                hash_code_adj = hash_function(adjacent_img)
+                # For the direction in valid_neighbours,append the adjacent hashcode
+                adjacency_list[directions].append(
+                        (hash_to_code_dict[hash_code], hash_to_code_dict[hash_code_adj])
+                )
+    return adjacency_list
 
 def write_adjacency_visualize(adjacency_list, pattern_code_set):
     if os.path.isdir(os.path.join("vis", "adjacency")):

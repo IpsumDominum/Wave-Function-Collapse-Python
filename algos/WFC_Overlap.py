@@ -17,7 +17,7 @@ from algos.wfc_lib.wfc_utils import (
     prepare_write_outputs,
 )
 from algos.wfc_lib.wfc_encode import get_encoded_patterns
-from algos.wfc_lib.wfc_adjacency import extract_adjacency, build_adjacency_matrix
+from algos.wfc_lib.wfc_adjacency import extract_adjacency, build_adjacency_matrix,extract_adjacency_from_image
 from algos.wfc_lib.wfc_output import (
     build_output_matrix,
     observe,
@@ -49,10 +49,21 @@ def wfc_overlap_run(
     MAX_BACKTRACK = 5,
     WRITE_VIDEO=False,
     SPECS={},
-):
+):  
     ###################################################
     print("RUNNING")
     video_out = []
+    directions_list = [
+        (0, -1),
+        (0, 1),
+        (-1, 0),
+        (1, 0),
+        (-1, -1),
+        (1, -1),
+        (-1, 1),
+        (1, 1),
+    ]
+    directions_list = [(0, -1), (1, 0), (0, 1), (-1, 0)]
     ###################################################
     print("ENCODING...")
     pattern_set, hash_frequency_dict, ground = get_encoded_patterns(
@@ -73,8 +84,11 @@ def wfc_overlap_run(
     ###################################################
     print("EXTRACTING ADJACENCY...")
     adjacency_list = extract_adjacency(
-        hash_to_code_dict, pattern_set, N, VISUALIZE=VISUALIZE_ADJACENCY
+        hash_to_code_dict, pattern_set, N, directions_list,VISUALIZE=VISUALIZE_ADJACENCY
     )
+    #adjacency_list = extract_adjacency_from_image(
+    #    input_img,hash_to_code_dict, pattern_set, N, VISUALIZE=VISUALIZE_ADJACENCY
+    #)
     adjacency_matrices = build_adjacency_matrix(
         adjacency_list, pattern_code_set, WRITE=WRITE
     )
@@ -82,12 +96,12 @@ def wfc_overlap_run(
     print("BUILDING OUTPUT MATRIX...")
     output_matrix = build_output_matrix(code_frequencies, output_size)
     output_matrix = (
-        pad_ground(output_matrix, ground,pattern_code_set,code_frequencies) if GROUND else output_matrix
+        pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color_set,adjacency_matrices) if GROUND else output_matrix
     )
     ###################################################
     print("PROPAGATING...")
     output_matrix = propagate(
-        output_matrix, avg_color_set, adjacency_matrices, code_frequencies
+        output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list
     )        
     backtrack_queue,output_matrix,backtrack_no = prepare_backtrack(copy.deepcopy(output_matrix),MAX_BACKTRACK)
     t = 0
@@ -119,7 +133,7 @@ def wfc_overlap_run(
         # PROPAGATE
         #===========================
         output_matrix = propagate(
-            output_matrix, avg_color_set, adjacency_matrices, code_frequencies
+            output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list
         )
         #===========================
         # RENDER

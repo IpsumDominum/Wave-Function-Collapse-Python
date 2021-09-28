@@ -49,22 +49,26 @@ for spec in specs:
     WRITE_VIDEO = load_spec(specs[spec], "WRITE_VIDEO", False)
     MAX_BACKTRACK = load_spec(specs[spec], "MAX_BACKTRACK", 5)
     GROUND = load_spec(specs[spec], "GROUND", False)
-    
+    MODE = load_spec(specs[spec],"MODE","overlap")
     try:
-        wfc_overlap_run(
-            item_img,
-            N,
-            output_size=OUTPUT_SIZE,
-            output_name=OUTPUT_NAME,
-            VISUALIZE_ENCODE=VISUALIZE_ENCODE,
-            VISUALIZE_ADJACENCY=VISUALIZE_ADJACENCY,
-            MAX_BACKTRACK = MAX_BACKTRACK,
-            WRITE=WRITE,
-            WRITE_VIDEO=WRITE_VIDEO,
-            GROUND = GROUND,
-            SPECS=spec
-        )
-        # wfc_run(item_img,2,20,output_name=img_name,write_output=False)
+        if(MODE=="overlap"):
+            wfc_overlap_run(
+                item_img,
+                N,
+                output_size=OUTPUT_SIZE,
+                output_name=OUTPUT_NAME,
+                VISUALIZE_ENCODE=VISUALIZE_ENCODE,
+                VISUALIZE_ADJACENCY=VISUALIZE_ADJACENCY,
+                MAX_BACKTRACK = MAX_BACKTRACK,
+                WRITE=WRITE,
+                WRITE_VIDEO=WRITE_VIDEO,
+                GROUND = GROUND,
+                SPECS=spec
+            )
+        elif(MODE=="tiled"):
+            wfc_run(item_img,N,OUTPUT_SIZE,output_name=OUTPUT_NAME,write_output=False)
+        elif(MODE=="random"):
+            random_choice_run(item_img,N,OUTPUT_SIZE)
     except AttributeError as e:
         print("==========================================")
         print("image " + spec + " not found in ./samples")

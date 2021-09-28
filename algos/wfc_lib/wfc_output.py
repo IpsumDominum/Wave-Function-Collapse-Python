@@ -7,10 +7,10 @@ import imageio
 
 LARGE_NUMBER = 1000000
 
-def pad_ground(output_matrix, ground,pattern_code_set,code_frequencies):
+def pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color_set,adjacency_matrices):
     output_matrix["valid_states"][:, -1, :] = False
     for item in ground:
-        output_matrix["valid_states"][item, -1, :] = True
+        output_matrix["valid_states"][item, -1, :] = True    
     return output_matrix
 
 def build_output_matrix(code_frequencies, output_size):
@@ -84,21 +84,10 @@ def observe(output_matrix, pattern_code_set, hash_frequency_dict, code_frequenci
     return (done, contradiction,output_matrix)
 
 
-def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies):
+def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list):
     # Elegant global propagation, reference to Issac Karth Implementation
     # For each direction, get the supports as matrix multiplication of the
     # Shifted array and the valid adjacency
-    directions_list = [
-        (0, -1),
-        (0, 1),
-        (-1, 0),
-        (1, 0),
-        (-1, -1),
-        (1, -1),
-        (-1, 1),
-        (1, 1),
-    ]
-    directions_list = [(0,-1),(0,1),(-1,0),(1,0)]
     support = {}
     padded = np.pad(
         output_matrix["valid_states"],

@@ -128,7 +128,6 @@ def wfc_run(
                     exit()
 
     print("EXTRACTING ADJACENCY...")
-    VISUALIZE = False
     # EXTRACT ADJACENCY
     for i in range(math.ceil((input_shape_i - N) // N) + 2):
         for j in range(math.ceil((input_shape_j - N) // N) + 2):

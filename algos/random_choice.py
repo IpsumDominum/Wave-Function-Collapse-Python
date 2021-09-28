@@ -39,12 +39,17 @@ def random_choice_run(input_img, N=3, output_size=300):
         for j in range(input_img.shape[1] // N):
             cropped_sets.append(input_img[i * N : (i + 1) * N, j * N : (j + 1) * N, :])
 
+    QUIT = False
     for i in range(output_size // N):
         for j in range(output_size // N):
+            if(QUIT==True):
+                break
             sampled = random.sample(cropped_sets, k=1)[0]
             output_shape[(i * N) : (i + 1) * N, (j * N) : (j + 1) * N, :] = sampled
-    cv2.imshow("output", cv2.resize(output_shape / 100, (512, 512)))
-    cv2.imshow("input", cv2.resize(input_img, (128, 128)))
-    k = cv2.waitKey(0)
+            cv2.imshow("output", cv2.resize(output_shape / 255, (512, 512),interpolation=3))
+            k = cv2.waitKey(1)
+            if k == ord("q"):
+                QUIT = True
+    k = cv2.waitKey(0)            
     if k == ord("q"):
         exit()
