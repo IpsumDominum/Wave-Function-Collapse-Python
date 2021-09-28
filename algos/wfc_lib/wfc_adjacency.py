@@ -3,6 +3,7 @@ import cv2
 import random
 import math
 from collections import defaultdict
+from algos.wfc_lib.wfc_global_constraints import adj_global_constr
 import os
 from tqdm import tqdm
 from algos.wfc_lib.wfc_utils import (
@@ -88,7 +89,12 @@ def extract_adjacency(hash_to_code_dict, pattern_set, N, directions_list,VISUALI
                     -min(dy, 0) : N - max(dy, 0), -min(dx, 0) : N - max(dx, 0)
                 ]
                 match = False
+<<<<<<< HEAD
                 if img_equal(sliced, sliced2):
+=======
+                global_constr_match = adj_global_constr(sliced, sliced2)
+                if(img_equal(sliced,sliced2) and global_constr_match):
+>>>>>>> ea18d63e1c745d3bc2ffd6e22cee821bfa355722
                     match = True
                     adjacency_list[direction].append(
                         (hash_to_code_dict[item], hash_to_code_dict[item2])
@@ -163,9 +169,17 @@ def build_adjacency_matrix(adjacency_list, pattern_code_set, WRITE=False):
         m = np.zeros((num_patterns, num_patterns), dtype=bool)
         for i, adj in enumerate(adjacency_list[d]):
             m[adj[0], adj[1]] = True
+<<<<<<< HEAD
         # Optional to use sparse matrix.
         # adjacency_matrices[d] = sparse.csr_matrix(m)
         adjacency_matrices[d] = m
     if WRITE:
         write_adjacency_visualize(adjacency_list, pattern_code_set)
+=======
+        #Optional to use sparse matrix.
+        #adjacency_matrices[d] = sparse.csr_matrix(m)
+        adjacency_matrices[d] = m    
+    if(WRITE):
+        write_adjacency_visualize(adjacency_list,pattern_code_set)     
+>>>>>>> ea18d63e1c745d3bc2ffd6e22cee821bfa355722
     return adjacency_matrices
