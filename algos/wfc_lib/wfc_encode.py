@@ -47,6 +47,12 @@ def write_encoded_patterns(pattern_set):
             cv2.resize(pattern_set[pattern], (256, 256), interpolation=3),
         )
 
+def identity_grid(grid):
+    return np.array(grid)
+def reflect_grid(grid):
+    return np.fliplr(grid)
+def rotate_grid(grid):
+    return np.rot90(grid,axes=(1, 0))
 def get_encoded_patterns(
     input_img, N, VISUALIZE=False, GROUND={}, WRITE=False, SPECS={}
 ):
@@ -60,33 +66,47 @@ def get_encoded_patterns(
     transforms = [np.array]    
     transforms = [np.fliplr, np.flipud,np.array]    
     transforms = [np.fliplr,np.array]    
+    grid_ops = [
+        identity_grid,
+        reflect_grid,
+        #rotate_grid,
+        #reflect_grid,
+        #rotate_grid,
+        #reflect_grid,
+        #rotate_grid,
+        #reflect_grid,
+    ]
     ENCODE = "overlap"
     i_range = input_padded.shape[0] - N+1 if ENCODE=="overlap" else input_padded.shape[0]//N + 1
     j_range = input_padded.shape[1] - N+1 if ENCODE=="overlap" else input_padded.shape[1]//N
-    for i in range(i_range):
-        for j in range(j_range):
-            cropped_pattern = input_padded[i : i + N, j : j + N, :] if ENCODE=="overlap" else input_padded[i*N : (i+1)*N, j*N : (j+1)*N, :]
 
-            hash_code = hash_function(cropped_pattern)
-            pattern_set[hash_code] = cropped_pattern
-            hash_frequency_dict[hash_code] += 1
-            for transform in transforms:
-                transformed = transform(cropped_pattern.copy())                
-                for _ in range(2):
-                    transformed = np.rot90(transformed)
-                    hash_code = hash_function(transformed)
-                    pattern_set[hash_code] = transformed
-                    hash_frequency_dict[hash_code] += 1
-            if GROUND :
-                if( (i==SPECS["GROUND_LEVEL"] and ENCODE=="overlap")
-                    or 
-                    (i==SPECS["GROUND_LEVEL"] and ENCODE!="overlap")
-                ):
-                    
-                    hash_code = hash_function(cropped_pattern)                    
-                    ground[hash_code] +=1
-            if VISUALIZE :
-                visualize_wfc_encode(input_padded, i, j, N,ENCODE)
+    for op in grid_ops:
+        input_padded = op(input_padded.copy())
+        for i in range(i_range):
+            for j in range(j_range):
+                cropped_pattern = input_padded[i : i + N, j : j + N, :] if ENCODE=="overlap" else input_padded[i*N : (i+1)*N, j*N : (j+1)*N, :]
+                hash_code = hash_function(cropped_pattern)
+                pattern_set[hash_code] = cropped_pattern
+                hash_frequency_dict[hash_code] += 1
+                """
+                for transform in transforms:
+                    transformed = transform(cropped_pattern.copy())                
+                    for _ in range(2):
+                        transformed = np.rot90(transformed)
+                        hash_code = hash_function(transformed)
+                        pattern_set[hash_code] = transformed
+                        hash_frequency_dict[hash_code] += 1
+                """
+                if GROUND :
+                    if( (i==SPECS["GROUND_LEVEL"] and ENCODE=="overlap")
+                        or 
+                        (i==SPECS["GROUND_LEVEL"] and ENCODE!="overlap")
+                    ):
+                        
+                        hash_code = hash_function(cropped_pattern)                    
+                        ground[hash_code] +=1
+                if VISUALIZE :
+                    visualize_wfc_encode(input_padded, i, j, N,ENCODE)
     if WRITE:
         write_encoded_patterns(pattern_set)
     

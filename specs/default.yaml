@@ -7,7 +7,7 @@ Flowers.png:
   WRITE : False
   WRITE_VIDEO : True
   GROUND : True
-  MAX_BACKTRACK : 10
+  MAX_BACKTRACK : 20
   GROUND_LEVEL : 19
   MODE : "overlap"
 ##########################

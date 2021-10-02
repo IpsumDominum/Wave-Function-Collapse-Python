@@ -121,7 +121,7 @@ def wfc_overlap_run(
         if(contradiction):
             print("Contradiction! Backtracking...step {}".format(backtrack_no))
             try:
-                output_matrix = copy.deepcopy(backtrack_memory(backtrack_queue,backtrack_no))
+                output_matrix = copy.deepcopy(backtrack_memory(backtrack_queue,backtrack_no))                            
                 backtrack_no = min(backtrack_no+1,MAX_BACKTRACK)
             except AssertionError:
                 print("no previous state to backtrack on")                
@@ -146,6 +146,7 @@ def wfc_overlap_run(
         #===========================
         if WRITE_VIDEO:
             im_rgb = cv2.cvtColor(rendered.astype(np.uint8), cv2.COLOR_BGR2RGB)
+            im_rgb = cv2.resize(im_rgb,(512,512))
             video_out.append(im_rgb)
         k = cv2.waitKey(1)
         if k == ord("q"):

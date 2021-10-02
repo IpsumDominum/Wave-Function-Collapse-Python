@@ -14,7 +14,7 @@ Flower.png             |  Skyline.png           |    Cat.png           |  Red Ma
 -->
 ### Visualization (Most up to date result)
 Flower.png             | Red Maze.png| 
-![Flower](./gifs/Flowers_new.gif) | ![Red Maze](./gifs/RedMaze.png.gif)|
+![Flower](./wfc_outputs/Flowers.png.gif) | ![Red Maze](./gifs/RedMaze.png.gif)|
 
 
 ### Setup python / enviornment
