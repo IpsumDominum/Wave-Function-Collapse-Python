@@ -57,8 +57,9 @@ def get_encoded_patterns(
     input_padded = np.pad(input_img, ((PAD, PAD), (PAD, PAD), (0, 0)), "wrap")
     # Ground is for things like Flowers.png
     ground = defaultdict(lambda:0)
-    transforms = [np.fliplr, np.flipud,np.array]    
     transforms = [np.array]    
+    transforms = [np.fliplr, np.flipud,np.array]    
+    transforms = [np.fliplr,np.array]    
     ENCODE = "overlap"
     i_range = input_padded.shape[0] - N+1 if ENCODE=="overlap" else input_padded.shape[0]//N + 1
     j_range = input_padded.shape[1] - N+1 if ENCODE=="overlap" else input_padded.shape[1]//N
@@ -77,10 +78,11 @@ def get_encoded_patterns(
                     pattern_set[hash_code] = transformed
                     hash_frequency_dict[hash_code] += 1
             if GROUND :
-                if( (i==input_padded.shape[0]-N-1 and ENCODE=="overlap")
+                if( (i==SPECS["GROUND_LEVEL"] and ENCODE=="overlap")
                     or 
-                    (i==i_range-1 and ENCODE!="overlap")
+                    (i==SPECS["GROUND_LEVEL"] and ENCODE!="overlap")
                 ):
+                    
                     hash_code = hash_function(cropped_pattern)                    
                     ground[hash_code] +=1
             if VISUALIZE :

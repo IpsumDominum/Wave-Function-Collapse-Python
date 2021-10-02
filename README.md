@@ -1,8 +1,6 @@
 # COMPSCI 715 Group Project
 
-
-### Results (Blue Block indicates failed to solve constraint)
-
+<!--
 #### Tile Based (Adjacency extracted from input image relationships)
 
 Flower.png             |  Skyline.png           |    Spirals.png           |  
@@ -13,6 +11,11 @@ Flower.png             |  Skyline.png           |    Spirals.png           |
 Flower.png             |  Skyline.png           |    Cat.png           |  Red Maze.png           |  
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
 ![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Spirals](./gifs/Cat.png.gif)|![Red Maze](./gifs/RedMaze.png.gif)
+-->
+### Visualization (Most up to date result)
+Flower.png             | Red Maze.png| 
+![Flower](./gifs/Flowers_new.gif) | ![Red Maze](./gifs/RedMaze.png.gif)|
+
 
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.

@@ -41,7 +41,7 @@ def load_spec(spec_dict, key, default):
 for spec in specs:
     item_img = cv2.imread(os.path.join("samples", spec))
     N = load_spec(specs[spec], "N", 3)
-    OUTPUT_SIZE = load_spec(specs[spec], "OUTPUT_SIZE", 3)
+    OUTPUT_SIZE = load_spec(specs[spec], "OUTPUT_SIZE", 32)
     OUTPUT_NAME = load_spec(specs[spec], "OUTPUT_NAME", spec)
     VISUALIZE_ENCODE = load_spec(specs[spec], "VISUALIZE_ENCODE", False)
     VISUALIZE_ADJACENCY = load_spec(specs[spec], "VISUALIZE_ADJACENCY", False)
@@ -49,6 +49,7 @@ for spec in specs:
     WRITE_VIDEO = load_spec(specs[spec], "WRITE_VIDEO", False)
     MAX_BACKTRACK = load_spec(specs[spec], "MAX_BACKTRACK", 5)
     GROUND = load_spec(specs[spec], "GROUND", False)
+    GROUND_LEVEL = load_spec(specs[spec], "GROUND_LEVEL", -1)
     MODE = load_spec(specs[spec],"MODE","overlap")
     try:
         if(MODE=="overlap"):
@@ -63,7 +64,7 @@ for spec in specs:
                 WRITE=WRITE,
                 WRITE_VIDEO=WRITE_VIDEO,
                 GROUND = GROUND,
-                SPECS=spec
+                SPECS=specs[spec]
             )
         elif(MODE=="tiled"):
             wfc_run(item_img,N,OUTPUT_SIZE,output_name=OUTPUT_NAME,write_output=False)

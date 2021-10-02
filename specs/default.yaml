@@ -2,14 +2,14 @@
 Flowers.png:
   OUTPUT_SIZE: 32
   N : 3
-  VISUALIZE_Encode: False
+  VISUALIZE_ENCODE: False
   VISUALIZE_ADJACENCY: False
   WRITE : False
-  WRITE_VIDEO : False
+  WRITE_VIDEO : True
   GROUND : True
   MAX_BACKTRACK : 10
+  GROUND_LEVEL : 19
   MODE : "overlap"
 ##########################
-Skyline.png:
-  GROUND : False
+
   

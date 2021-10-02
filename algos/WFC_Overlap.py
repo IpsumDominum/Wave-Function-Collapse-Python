@@ -82,7 +82,7 @@ def wfc_overlap_run_backtrack(input_img,N=3,output_size=32,output_name="out_vide
         (-1, 1),
         (1, 1),
     ]
-    directions_list = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+    #directions_list = [(0, -1), (1, 0), (0, 1), (-1, 0)]
     ###################################################
     print("ENCODING...")
     pattern_set, hash_frequency_dict, ground = get_encoded_patterns(
@@ -165,20 +165,8 @@ def wfc_overlap_run_backtrack(input_img,N=3,output_size=32,output_name="out_vide
         # DISPLAY AND WRITE(OPTIONAL)
         #===========================
         if WRITE_VIDEO:
-            video_out.append(rendered.astype(np.uint8))
-=======
-    
-    output_matrix = propagate(output_matrix,avg_color_set,adjacency_matrices,code_frequencies)
-    timestep = 0
-    # backtrack_queue = np.ones(max_backtrack,dtype=np.int64) * -1
-    backtrack_queue = max_backtrack * [-1]
-    backtrack_queue = update_queue(backtrack_queue, output_matrix)
-    while True:
-        done,output_matrix,timestep,backtrack_queue = observe(output_matrix,pattern_code_set,hash_frequency_dict,code_frequencies,timestep, backtrack_queue)
-        output_matrix = propagate(output_matrix,avg_color_set,adjacency_matrices,code_frequencies)
-        rendered = render(output_matrix,output_size,N,pattern_code_set,WRITE_VIDEO=WRITE_VIDEO)
-        if(WRITE_VIDEO):video_out.append(rendered.astype(np.uint8))
->>>>>>> ea18d63e1c745d3bc2ffd6e22cee821bfa355722
+            im_rgb = cv2.cvtColor(rendered.astype(np.uint8), cv2.COLOR_BGR2RGB)
+            video_out.append(im_rgb)
         k = cv2.waitKey(1)
         if k == ord("q"):
             break
