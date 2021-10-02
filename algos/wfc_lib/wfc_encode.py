@@ -106,6 +106,7 @@ def get_encoded_patterns(
                         hash_code = hash_function(cropped_pattern)                    
                         ground[hash_code] +=1
                 if VISUALIZE :
+                    print(i)
                     visualize_wfc_encode(input_padded, i, j, N,ENCODE)
     if WRITE:
         write_encoded_patterns(pattern_set)

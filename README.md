@@ -13,9 +13,9 @@ Flower.png             |  Skyline.png           |    Cat.png           |  Red Ma
 ![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Spirals](./gifs/Cat.png.gif)|![Red Maze](./gifs/RedMaze.png.gif)
 -->
 ### Visualization (Most up to date result)
-Flower.png             | Red Maze.png| 
-:-------------------------:|:-------------------------:|
-![Flower](./wfc_outputs/Flowers.png.gif) | ![Red Maze](./gifs/RedMaze.png.gif)|
+Flower.png             | Red Maze.png| Skyline.png | 
+:-------------------------:|:-------------------------:|:-------------------------:|
+![Flower](./wfc_outputs/Flowers.png.gif) | ![Red Maze](./gifs/RedMaze.png.gif)| ![Skyline](./wfc_outputs/Skyline.png.gif)|
 
 
 ### Setup python / enviornment
