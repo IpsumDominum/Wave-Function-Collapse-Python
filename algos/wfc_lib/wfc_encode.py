@@ -76,12 +76,12 @@ def get_encoded_patterns(
         #rotate_grid,
         #reflect_grid,
     ]
-    ENCODE = "overlap"
-    i_range = input_padded.shape[0] - N+1 if ENCODE=="overlap" else input_padded.shape[0]//N + 1
-    j_range = input_padded.shape[1] - N+1 if ENCODE=="overlap" else input_padded.shape[1]//N
+    ENCODE = "overlap"    
 
-    for op in grid_ops:
+    for op_idx,op in enumerate(grid_ops):
         input_padded = op(input_padded.copy())
+        i_range = input_padded.shape[0] - N+1 if ENCODE=="overlap" else input_padded.shape[0]//N + 1
+        j_range = input_padded.shape[1] - N+1 if ENCODE=="overlap" else input_padded.shape[1]//N
         for i in range(i_range):
             for j in range(j_range):
                 cropped_pattern = input_padded[i : i + N, j : j + N, :] if ENCODE=="overlap" else input_padded[i*N : (i+1)*N, j*N : (j+1)*N, :]
@@ -97,7 +97,7 @@ def get_encoded_patterns(
                         pattern_set[hash_code] = transformed
                         hash_frequency_dict[hash_code] += 1
                 """
-                if GROUND :
+                if GROUND and op_idx==0:
                     if( (i==SPECS["GROUND_LEVEL"] and ENCODE=="overlap")
                         or 
                         (i==SPECS["GROUND_LEVEL"] and ENCODE!="overlap")

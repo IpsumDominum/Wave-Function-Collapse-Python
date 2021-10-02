@@ -1,0 +1,12 @@
+##########################
+Platformer.png:
+  OUTPUT_SIZE: 40
+  N : 3
+  VISUALIZE_ENCODE: False
+  VISUALIZE_ADJACENCY: False
+  WRITE : False
+  WRITE_VIDEO : True
+  GROUND : True
+  GROUND_LEVEL: 28
+  MAX_BACKTRACK : 20
+  MODE : "overlap"

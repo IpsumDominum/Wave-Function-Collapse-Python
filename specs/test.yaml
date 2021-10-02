@@ -7,6 +7,6 @@ Skyline.png:
   WRITE : False
   WRITE_VIDEO : False
   GROUND : True
-  GROUND_LEVEL: 22
+  GROUND_LEVEL: 24
   MAX_BACKTRACK : 20
   MODE : "overlap"

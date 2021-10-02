@@ -63,7 +63,7 @@ def wfc_overlap_run(
         (-1, 1),
         (1, 1),
     ]
-    #directions_list = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+    directions_list = [(0, -1), (1, 0), (0, 1), (-1, 0)]
     ###################################################
     print("ENCODING...")
     pattern_set, hash_frequency_dict, ground = get_encoded_patterns(
@@ -97,7 +97,7 @@ def wfc_overlap_run(
     output_matrix = build_output_matrix(code_frequencies, output_size)
     output_matrix = (
         pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color_set,adjacency_matrices) if GROUND else output_matrix
-    )
+    )    
     ###################################################
     print("PROPAGATING...")
     output_matrix = propagate(
@@ -113,8 +113,6 @@ def wfc_overlap_run(
             output_matrix, pattern_code_set, hash_frequency_dict, code_frequencies
         )
         t +=1
-        if(t%3==0):
-            contradiction = True
         #===========================
         # BACKTRACK IF CONTRADICTION
         #===========================
@@ -124,7 +122,8 @@ def wfc_overlap_run(
                 output_matrix = copy.deepcopy(backtrack_memory(backtrack_queue,backtrack_no))                            
                 backtrack_no = min(backtrack_no+1,MAX_BACKTRACK)
             except AssertionError:
-                print("no previous state to backtrack on")                
+                output_matrix = backtrack_memory(backtrack_queue,len(backtrack_queue))
+                #print("no previous state to backtrack on")                
                 backtrack_no = 1
         else:            
             backtrack_queue = update_queue(backtrack_queue, copy.deepcopy(output_matrix))

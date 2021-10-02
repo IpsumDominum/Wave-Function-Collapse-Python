@@ -114,18 +114,22 @@ def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies
     # Update new entropy for the matrix based on current available states
     for i in range(output_matrix["entropy"].shape[0]):
         for j in range(output_matrix["entropy"].shape[1]):
-            valid_patterns = output_matrix["valid_states"][:, i, j][
+            valid_patterns = np.arange(output_matrix["valid_states"].shape[0])[
                 output_matrix["valid_states"][:, i, j] > 0
             ]
-            output_matrix["entropy"][i][j] = np.sum(code_frequencies[output_matrix["valid_states"][:, i, j] > 0])
-            output_matrix["entropy"][i][j] = (
-                LARGE_NUMBER
-                if (output_matrix["chosen_states"][i][j] != -1)
-                else output_matrix["entropy"][i][j] + random.random() * 0.5
-            )
-            output_matrix["colors"][i][j] = np.average(
-                avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
-            )
+            if(len(valid_patterns)==1):                
+                output_matrix["chosen_states"][i][j] = valid_patterns[0]
+                output_matrix["entropy"][i][j] = LARGE_NUMBER
+            else:
+                output_matrix["entropy"][i][j] = np.sum(code_frequencies[output_matrix["valid_states"][:, i, j] > 0])
+                output_matrix["entropy"][i][j] = (
+                    LARGE_NUMBER
+                    if (output_matrix["chosen_states"][i][j] != -1)
+                    else output_matrix["entropy"][i][j] + random.random() * 0.5
+                )
+                output_matrix["colors"][i][j] = np.average(
+                    avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
+                )
 
     return output_matrix
 
