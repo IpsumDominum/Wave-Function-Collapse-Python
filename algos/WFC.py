@@ -62,7 +62,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     if(write_output):
         frame_width = 512
         frame_height = 512
-        out = cv2.VideoWriter(os.path.join(output_dir,output_name+".avi"),cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+        out = cv2.VideoWriter(os.path.join(output_dir,output_name+".avi"),cv2.VideoWriter_fourcc('M','J','P','G'), 80, (frame_width,frame_height))
     else:
         out = None
 
@@ -79,11 +79,13 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     cropped_list = []
     hash_to_idx_dict = {}
     hash_frequency_dict = defaultdict(lambda:0)
+    PAD = 2*N
     input_padded = np.pad(
         input_img,
-        ((N,N),(N,N),(0,0)),
+        ((PAD,PAD),(PAD,PAD),(0,0)),
         "wrap"
     )
+
     cropped_sets = np.zeros((*input_padded.shape[:2],N,N,channels))
     #Get all subsets of these.
     #Non overlapping tiles
@@ -95,35 +97,47 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     debug_output = np.zeros((N*3,N*3,3))
     directions_list = [(1,0),(1,2),(0,1),(2,1),(0,0),(2,0),(0,2),(2,2)]
 
+    import math
     VISUALIZE = False
+    print("ENCODING...")
     #ENCODE EVERYTHING
-    for i in range(input_padded.shape[0]-N):
-        for j in range(input_padded.shape[1]-N):
-            cropped_sets[i][j][:] = input_padded[i:i+N,j:j+N,:]
-            hash_code = hash_function(input_padded[i:i+N,j:j+N,:])
+    for i in range(math.ceil((input_padded.shape[0]-N)//N)+1):
+        for j in range(math.ceil((input_padded.shape[1]-N)//N)+1):
+            crop_img = input_padded[i*N:(i+1)*N,j*N:(j+1)*N,:]
+            cropped_sets[i][j][:] = crop_img
+            hash_code = hash_function(crop_img)
             cropped_list.append(hash_code)
             hash_to_idx_dict[hash_code] = (i,j)
             hash_frequency_dict[hash_code] +=1
-
-    VISUALIZE = False
-    #EXTRACT ADJACENCY
-    for i in range(N,input_shape_i+1):
-        for j in range(N,input_shape_j+1):
-            hash_code = hash_function(input_padded[i:i+N,j:j+N,:])
             if(VISUALIZE):
-                debug_output[N:N+N,N:N+N] = input_padded[i:i+N,j:j+N,:]
-                cv_img(input_padded[i:i+N,j:j+N,:],id="input_padded")
+                show = input_padded.copy()
+                cv2.rectangle(show,(j*N,i*N),((j+1)*N,(i+1)*N),(0,255,0),1)
+                cv_img(show)
+                k = cv2.waitKey(0)
+                if(k==ord('q')):
+                    cv2.destroyAllWindows()
+                    exit()
+    print("EXTRACTING ADJACENCY...")
+    VISUALIZE = True
+    #EXTRACT ADJACENCY
+    for i in range(math.ceil((input_shape_i-N)//N)+2):
+        for j in range(math.ceil((input_shape_j-N)//N)+2):
+            crop_img = input_padded[(i)*N+PAD:(i+1)*N+PAD,(j)*N+PAD:(j+1)*N+PAD,:]
+            hash_code = hash_function(crop_img)
+            if(VISUALIZE):
+                debug_output[N:N+N,N:N+N] = crop_img
+                cv_img(crop_img,id="input_padded")
                 print("====")
                 print(i,j)
                 print(i,i+N,j,j+N)
                 print("====")
                 show = input_padded.copy()
-                cv2.rectangle(show,(j,i),(j+N,i+N),(0,255,0),1)
+                cv2.rectangle(show,(j*N+PAD,i*N+PAD),((j+1)*N+PAD,(i+1)*N+PAD),(0,255,0),1)
                 #cv2.rectangle(debug_output,(N,N),(N+N,N+N),(0,255,0),1)
 
             for index,directions in enumerate(directions_list):
-                idx = (i+(directions[0]-1)*N)%input_padded.shape[0]
-                jdx = (j+(directions[1]-1)*N)%input_padded.shape[1]
+                idx = (i*N+PAD+(directions[0]-1)*N)%input_padded.shape[0]
+                jdx = (j*N+PAD+(directions[1]-1)*N)%input_padded.shape[1]
                 adjacent_img = input_padded[idx:idx+N,jdx:jdx+N,:]
                 hash_code_adj = hash_function(adjacent_img)
 
@@ -142,10 +156,12 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
                 if(k==ord('q')):
                     cv2.destroyAllWindows()
                     exit()
+
     #Do some testing
     #One : Ensure that all patterns are unique
     TEST = False
     if(TEST):
+        print("TESTING ALL PATTERNS ARE UNIQUE")
         for i in range(len(cropped_list)):
             for j in range(len(cropped_list)):
                 if(cropped_list[i]==cropped_list[j]):
@@ -170,6 +186,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
         return cropped_sets[idx[0]][idx[1]]
 
     VISUALIZE = False
+    print("MAKING ADJACENCIES_UNIQUE")
     adjacency_visualization_grid = np.zeros((N*9,N*9,3))    
     for nei in valid_neighbours:
         #get some unique neighbours
@@ -277,6 +294,7 @@ def wfc_run(input_img,N=3,output_size=32,write_output=False,output_name="out_vid
     #from queue import Queue
     #queue = Queue()
     #queue.put(observe(output))
+    print("BEGINNING PROPAGATION")
     while True:
         index = observe(output)
         if(index==-1):

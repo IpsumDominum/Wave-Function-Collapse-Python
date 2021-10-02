@@ -1,5 +1,17 @@
 # COMPSCI 715 Group Project
 
+
+### Results (Blue Block indicates failed to solve constraint)
+
+Flower.png             |  Skyline.png           |    Spirals.png           |  
+:-------------------------:|:-------------------------:|:-------------------------:|
+![Flower](./gifs/Flowers_speedup.gif) |![Skyline](./gifs/Skyline_speedup.gif) |![Spirals](./gifs/Spirals_speedup.gif)
+
+
+Random Pixel Dungeon Photo | Random Pixel Dungeon Photo Result
+:-------------------------:|:-------------------------:
+![PixelDungeon](./samples/test.jpg)|![PixelDungeon](./gifs/test_speedup.gif)
+
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
 But recommended to use python3, since python2 is no longer maintained.
@@ -29,19 +41,23 @@ Example:
 python test.py --Flowers.png
 ```
 
+
 ### TODO
 
 1.Tile Based Satisfy constraint 1. (Done)
+
+
 2.Tile Based Satisfy constraint 2. (Done? Choosing each expansion with regards to a probability based on the frequency of the pattern's occurance)
+
+
 3.Overlap based
+
+
 4.Overlap Based Rotation and Symmetry.
+
+
 5.Tile Based Rotation and Symmetry.
 
-### Results
-
-Flower.png             |  Skyline.png           |  Platformer.png
-:-------------------------:|:-------------------------:|:-------------------------:
-![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Platformer](./gifs/Platformer.png.gif)
 
 
 
