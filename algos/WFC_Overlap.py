@@ -63,7 +63,7 @@ def wfc_overlap_run(
         (-1, 1),
         (1, 1),
     ]
-    directions_list = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+    #directions_list = [(0, -1), (1, 0), (0, 1), (-1, 0)]
     ###################################################
     print("ENCODING...")
     pattern_set, hash_frequency_dict, ground = get_encoded_patterns(
@@ -145,7 +145,8 @@ def wfc_overlap_run(
         # DISPLAY AND WRITE(OPTIONAL)
         #===========================
         if WRITE_VIDEO:
-            video_out.append(rendered.astype(np.uint8))
+            im_rgb = cv2.cvtColor(rendered.astype(np.uint8), cv2.COLOR_BGR2RGB)
+            video_out.append(im_rgb)
         k = cv2.waitKey(1)
         if k == ord("q"):
             break
