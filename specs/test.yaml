@@ -1,0 +1,11 @@
+##########################
+Skyline.png:
+  OUTPUT_SIZE: 32
+  N : 3
+  VISUALIZE_Encode: False
+  VISUALIZE_ADJACENCY: False
+  WRITE : False
+  WRITE_VIDEO : False
+  GROUND : True
+  MAX_BACKTRACK : 10
+  MODE : "overlap"
