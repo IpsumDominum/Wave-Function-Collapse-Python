@@ -12,11 +12,15 @@ Flower.png             |  Skyline.png           |    Cat.png           |  Red Ma
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
 ![Flower](./gifs/Flowers.png.gif) |![Skyline](./gifs/Skyline.png.gif) |![Spirals](./gifs/Cat.png.gif)|![Red Maze](./gifs/RedMaze.png.gif)
 -->
-### Visualization (Most up to date result)
-Flower.png             | Red Maze.png| 3Bricks.png | Platformer.png|Mountains.png|Rooms.png|Water.png|
-:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
-![Flower](./wfc_outputs/Flowers.png.gif) | ![Red Maze](./gifs/RedMaze.png.gif)| ![3Bricks](./wfc_outputs/3Bricks.png.gif)|![Platformer](./wfc_outputs/Platformer.png.gif)|[Mountains](./wfc_outputs/Mountains.png.gif)|[Rooms](./wfc_outputs/Rooms.png.gif)|[Water](./wfc_outputs/Water.png.gif)|
+### Visualization 
+Flower.png             | Red Maze.png| 3Bricks.png | Platformer.png
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
+![Flower](./wfc_outputs/Flowers.png.gif) | ![Red Maze](./gifs/RedMaze.png.gif)| ![3Bricks](./wfc_outputs/3Bricks.png.gif)|![Platformer](./wfc_outputs/Platformer.png.gif)
 
+### More Visualizations
+ | Mountains.png | Rooms.png |Water.png|
+ :-------------------------:|:-------------------------:|:-------------------------:|
+ [Mountains](./wfc_outputs/Mountains.png.gif)|[Rooms](./wfc_outputs/Rooms.png.gif)|[Water](./wfc_outputs/Water.png.gif)|
 
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
