@@ -40,7 +40,8 @@ for output, each grid selects out of random one of the selection array membe
 def wfc_overlap_run(
     input_img,
     N=3,
-    output_size=32,
+    output_w=32,
+    output_h=32,
     output_name="out_video.avi",
     GROUND=False,
     WRITE=False,
@@ -94,17 +95,16 @@ def wfc_overlap_run(
     )
     ###################################################
     print("BUILDING OUTPUT MATRIX...")
-    output_matrix = build_output_matrix(code_frequencies, output_size)
+    output_matrix = build_output_matrix(code_frequencies, output_w,output_h)
     output_matrix = (
         pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color_set,adjacency_matrices) if GROUND else output_matrix
     )    
     ###################################################
     print("PROPAGATING...")
     output_matrix = propagate(
-        output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list
+        output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list,SPECS = SPECS
     )        
     backtrack_queue,output_matrix,backtrack_no = prepare_backtrack(copy.deepcopy(output_matrix),MAX_BACKTRACK)
-    t = 0
     while True:
         #===========================
         # OBSERVE
@@ -112,7 +112,6 @@ def wfc_overlap_run(
         done,contradiction, output_matrix = observe(
             output_matrix, pattern_code_set, hash_frequency_dict, code_frequencies
         )
-        t +=1
         #===========================
         # BACKTRACK IF CONTRADICTION
         #===========================
@@ -120,10 +119,10 @@ def wfc_overlap_run(
             print("Contradiction! Backtracking...step {}".format(backtrack_no))
             try:
                 output_matrix = copy.deepcopy(backtrack_memory(backtrack_queue,backtrack_no))                            
-                backtrack_no = min(backtrack_no+1,MAX_BACKTRACK)
+                backtrack_no = min(backtrack_no+2,MAX_BACKTRACK)
             except AssertionError:
                 output_matrix = backtrack_memory(backtrack_queue,len(backtrack_queue))
-                #print("no previous state to backtrack on")                
+                print("no previous state to backtrack on")                
                 backtrack_no = 1
         else:            
             backtrack_queue = update_queue(backtrack_queue, copy.deepcopy(output_matrix))
@@ -132,13 +131,13 @@ def wfc_overlap_run(
         # PROPAGATE
         #===========================
         output_matrix = propagate(
-            output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list
+            output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list,SPECS=SPECS
         )
         #===========================
         # RENDER
         #===========================
         rendered = render(
-            output_matrix, output_size, N, pattern_code_set, WRITE_VIDEO=WRITE_VIDEO
+            output_matrix, output_w,output_h, N, pattern_code_set, WRITE_VIDEO=WRITE_VIDEO
         )
         #===========================
         # DISPLAY AND WRITE(OPTIONAL)

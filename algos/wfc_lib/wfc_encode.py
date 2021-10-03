@@ -77,7 +77,6 @@ def get_encoded_patterns(
         #reflect_grid,
     ]
     ENCODE = "overlap"    
-
     for op_idx,op in enumerate(grid_ops):
         input_padded = op(input_padded.copy())
         i_range = input_padded.shape[0] - N+1 if ENCODE=="overlap" else input_padded.shape[0]//N + 1

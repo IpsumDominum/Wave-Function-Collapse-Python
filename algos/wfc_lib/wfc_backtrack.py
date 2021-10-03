@@ -17,7 +17,7 @@ def prepare_backtrack(output_matrix,max_backtrack=5):
 # Outputs the output matrix of the desired previous state
 # Backtrack number = 1 means backtrack only once (only to previous state)
 def backtrack_memory(backtrack_queue, backtrack_no=1):
-    backtrack = len(backtrack_queue) - backtrack_no
+    backtrack = backtrack_no -1
     assert backtrack_queue[backtrack] != -1# if no previous state of the output matrix                
     return backtrack_queue[backtrack]
 

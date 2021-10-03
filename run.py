@@ -41,7 +41,8 @@ def load_spec(spec_dict, key, default):
 for spec in specs:
     item_img = cv2.imread(os.path.join("samples", spec))
     N = load_spec(specs[spec], "N", 3)
-    OUTPUT_SIZE = load_spec(specs[spec], "OUTPUT_SIZE", 32)
+    OUTPUT_W = load_spec(specs[spec], "OUTPUT_W", 32)
+    OUTPUT_H = load_spec(specs[spec], "OUTPUT_H", 32)
     OUTPUT_NAME = load_spec(specs[spec], "OUTPUT_NAME", spec)
     VISUALIZE_ENCODE = load_spec(specs[spec], "VISUALIZE_ENCODE", False)
     VISUALIZE_ADJACENCY = load_spec(specs[spec], "VISUALIZE_ADJACENCY", False)
@@ -56,7 +57,8 @@ for spec in specs:
             wfc_overlap_run(
                 item_img,
                 N,
-                output_size=OUTPUT_SIZE,
+                output_w=OUTPUT_W,
+                output_h=OUTPUT_H,
                 output_name=OUTPUT_NAME,
                 VISUALIZE_ENCODE=VISUALIZE_ENCODE,
                 VISUALIZE_ADJACENCY=VISUALIZE_ADJACENCY,

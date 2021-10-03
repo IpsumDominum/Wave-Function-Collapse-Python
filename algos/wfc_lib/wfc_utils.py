@@ -15,7 +15,7 @@ def cv_wait(time):
 
 def cv_img(img, resize=True, wait=True, id=str(random.random())):
     if resize:
-        img = cv2.resize(img, (512, 512), interpolation=3) / 255
+        img = cv2.resize(img, (img.shape[0]*10, img.shape[1]*10), interpolation=3) / 255
     cv2.imshow(id, img)
     # if(wait):
 

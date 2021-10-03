@@ -13,14 +13,14 @@ def pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color
         output_matrix["valid_states"][item, -1, :] = True    
     return output_matrix
 
-def build_output_matrix(code_frequencies, output_size):
+def build_output_matrix(code_frequencies, output_w,output_h):
     output_matrix_valid_states = np.ones(
-        (len(code_frequencies), output_size, output_size), dtype=bool
+        (len(code_frequencies), output_w, output_h), dtype=bool
     )
-    output_matrix_colors = np.zeros((output_size, output_size, 3))
-    output_matrix_entropy = np.random.rand(output_size, output_size, 1) + np.sum(code_frequencies)
+    output_matrix_colors = np.zeros((output_w, output_h, 3))
+    output_matrix_entropy = np.random.rand(output_w, output_h, 1) + np.sum(code_frequencies)
     output_matrix_chosen_states = (
-        np.ones((output_size, output_size, 1), dtype=np.int64) * -1
+        np.ones((output_w, output_h, 1), dtype=np.int64) * -1
     )
     output_matrix = {
         "valid_states": output_matrix_valid_states,
@@ -83,18 +83,58 @@ def observe(output_matrix, pattern_code_set, hash_frequency_dict, code_frequenci
     #Return output matrix
     return (done, contradiction,output_matrix)
 
+def get_padded(output_matrix,PADMODE="FULLPERIODIC"):
+    if(PADMODE=="FULLPERIODIC"):
+        padded = np.pad(
+        output_matrix["valid_states"],
+        ((0, 0), (1, 1), (1, 1)),
+        "wrap",
+        )
+    elif(PADMODE=="LRPERIODIC"):   
+        padded = np.pad(
+        output_matrix["valid_states"],
+        ((0, 0), (0, 0), (1, 1)),
+        "wrap",
+        )
+        padded = np.pad(
+            padded,
+            ((0, 0), (1, 1), (0, 0)),
+            "constant",
+            constant_values=True,
+        ) 
+    elif(PADMODE=="UDPERIODIC"):    
+        padded = np.pad(
+        output_matrix["valid_states"],
+        ((0, 0), (1, 1), (0, 0)),
+        "wrap",
+        )
+        padded = np.pad(
+            padded,
+            ((0, 0), (0, 0), (1, 1)),
+            "constant",
+            constant_values=True,
+        ) 
+    elif(PADMODE=="NOPERIODIC"):
+        padded = np.pad(
+            output_matrix["valid_states"],
+            ((0, 0), (1, 1), (1, 1)),
+            "constant",
+            constant_values=True,
+        )
+    return padded
+def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list,SPECS):
+    #import time
 
-def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list):
+    #start = time.time()
     # Elegant global propagation, reference to Issac Karth Implementation
     # For each direction, get the supports as matrix multiplication of the
     # Shifted array and the valid adjacency
     support = {}
-    padded = np.pad(
-        output_matrix["valid_states"],
-        ((0, 0), (1, 1), (1, 1)),
-        "constant",
-        constant_values=True,
-    )
+    try:
+        padded = get_padded(output_matrix,PADMODE=SPECS["PADMODE"])
+    except KeyError:
+        padded = get_padded(output_matrix,PADMODE="FULLPERIODIC")
+    
     # Compute based on the current valid states, the neighbour's valid states.
     # Hence propagate the constraint wave.
     for direction in directions_list:
@@ -110,34 +150,37 @@ def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies
         # Update output_matrix valid states
     for direction in directions_list:
         output_matrix["valid_states"] *= support[direction]
-
+    #print("PROPAGATION TOOK : ",time.time()-start)
+    #start = time.time()
     # Update new entropy for the matrix based on current available states
     for i in range(output_matrix["entropy"].shape[0]):
         for j in range(output_matrix["entropy"].shape[1]):
+            """
             valid_patterns = np.arange(output_matrix["valid_states"].shape[0])[
                 output_matrix["valid_states"][:, i, j] > 0
             ]
-            if(len(valid_patterns)==1):                
+            if(len(valid_patterns)==1):
                 output_matrix["chosen_states"][i][j] = valid_patterns[0]
                 output_matrix["entropy"][i][j] = LARGE_NUMBER
-            else:
-                output_matrix["entropy"][i][j] = np.sum(code_frequencies[output_matrix["valid_states"][:, i, j] > 0])
-                output_matrix["entropy"][i][j] = (
-                    LARGE_NUMBER
-                    if (output_matrix["chosen_states"][i][j] != -1)
-                    else output_matrix["entropy"][i][j] + random.random() * 0.5
-                )
-                output_matrix["colors"][i][j] = np.average(
-                    avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
-                )
+            """
+            output_matrix["entropy"][i][j] = np.sum(code_frequencies[output_matrix["valid_states"][:, i, j] > 0])
+            output_matrix["entropy"][i][j] = (
+                LARGE_NUMBER
+                if (output_matrix["chosen_states"][i][j] != -1)
+                else output_matrix["entropy"][i][j] + random.random()
+            )
+            output_matrix["colors"][i][j] = np.average(
+                avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
+            )
 
+    #print("ENTROPY TOOK : ",time.time()-start)
     return output_matrix
 
 
 def render(
-    output_matrix, output_size, N, pattern_code_set, VISUALIZE=True, WRITE_VIDEO=False
+    output_matrix, output_w,output_h, N, pattern_code_set, VISUALIZE=True, WRITE_VIDEO=False
 ):
-    output_image = np.zeros((output_size + N - 1, output_size + N - 1, 3))
+    output_image = np.zeros((output_w + N - 1, output_h + N - 1, 3))
     for i in range(output_matrix["chosen_states"].shape[0]):
         for j in range(output_matrix["chosen_states"].shape[1]):
             pattern_code = output_matrix["chosen_states"][i, j, 0]
