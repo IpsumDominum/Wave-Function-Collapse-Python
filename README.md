@@ -18,7 +18,7 @@ Flower.png             | Red Maze.png| 3Bricks.png | Platformer.png
 ![Flower](./wfc_outputs/Flowers.png.gif) | ![Red Maze](./gifs/RedMaze.png.gif)| ![3Bricks](./wfc_outputs/3Bricks.png.gif)|![Platformer](./wfc_outputs/Platformer.png.gif)
 
 ### More Visualizations
- | Mountains.png | Rooms.png |Water.png|
+ Mountains.png | Rooms.png |Water.png|
  :-------------------------:|:-------------------------:|:-------------------------:|
  [Mountains](./wfc_outputs/Mountains.png.gif)|[Rooms](./wfc_outputs/Rooms.png.gif)|[Water](./wfc_outputs/Water.png.gif)|
 
@@ -54,19 +54,22 @@ python test.py --Flowers.png
 
 ### TODO
 
-1.Tile Based Satisfy constraint 1. (Done)
+1.Tile Based (Done (Need Revising))
+
+2.Manual adjacency creator (TODO)
+
+3.Overlap Based. (Done)
+
+4.Overlap Based Rotation and Symmetry. (Done)
 
 
-2.Tile Based Satisfy constraint 2. (Done? Choosing each expansion with regards to a probability based on the frequency of the pattern's occurance)
+5.Overlap Backtrack. (Done)
 
+6.Overlap global constraints -> Ground (Done)
 
-3.Overlap based
+7.Overlap more global constraints (TODO)
 
-
-4.Overlap Based Rotation and Symmetry.
-
-
-5.Tile Based Rotation and Symmetry.
+7.Overlap more global constraints (TODO)
 
 
 
