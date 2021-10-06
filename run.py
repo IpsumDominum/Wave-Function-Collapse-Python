@@ -69,9 +69,9 @@ for spec in specs:
                 SPECS=specs[spec]
             )
         elif(MODE=="tiled"):
-            wfc_run(item_img,N,OUTPUT_SIZE,output_name=OUTPUT_NAME,write_output=False)
+            wfc_run(item_img,N,OUTPUT_SIZE,output_name=OUTPUT_NAME,write_output=False) # under construction
         elif(MODE=="random"):
-            random_choice_run(item_img,N,OUTPUT_SIZE)
+            random_choice_run(item_img,N,OUTPUT_SIZE) # under construction
     except AttributeError as e:
         print("==========================================")
         print("image " + spec + " not found in ./samples")
