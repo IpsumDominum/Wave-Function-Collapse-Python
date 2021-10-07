@@ -1,5 +1,5 @@
 ##########################
-mooncity2.png:
+testmoon.png:
   OUTPUT_W: 32
   OUTPUT_H: 32
   PADMODE: "LRPERIODIC"
