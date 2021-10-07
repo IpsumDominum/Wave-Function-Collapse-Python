@@ -87,5 +87,5 @@ def main():
         cv2.destroyAllWindows()
         exit()
 
-cProfile.run('main()')
+cProfile.run("main()", sort="tottime")
 # main()
