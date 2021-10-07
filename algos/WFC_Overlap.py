@@ -83,6 +83,7 @@ def wfc_overlap_run(
         ground,
         code_frequencies,
     ) = get_hash_to_code(pattern_set, ground, hash_frequency_dict, GROUND=GROUND)
+    ori_pattern_code_set = pattern_code_set.copy()
     ###################################################
     print("EXTRACTING ADJACENCY...")
     adjacency_list = extract_adjacency(
@@ -110,7 +111,7 @@ def wfc_overlap_run(
         #===========================
         # OBSERVE
         #===========================
-        done,contradiction, output_matrix = observe(
+        done,contradiction, output_matrix, pattern_code_set = observe(
             output_matrix, pattern_code_set, hash_frequency_dict, code_frequencies
         )
         #===========================
@@ -138,7 +139,7 @@ def wfc_overlap_run(
         # RENDER
         #===========================
         rendered = render(
-            output_matrix, output_w,output_h, N, pattern_code_set, WRITE_VIDEO=WRITE_VIDEO
+            output_matrix, output_w,output_h, N, ori_pattern_code_set, WRITE_VIDEO=WRITE_VIDEO
         )
         #===========================
         # DISPLAY AND WRITE(OPTIONAL)

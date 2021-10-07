@@ -68,7 +68,10 @@ def choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies):
         output_matrix["valid_states"][:, array_index[0], array_index[1]] = False
         output_matrix["valid_states"][chosen_idx, array_index[0], array_index[1]] = True
         contradiction = False
-    return output_matrix,contradiction
+
+        output_matrix, pattern_code_set = matrix_global_constr(output_matrix, pattern_code_set, chosen_idx)
+        
+    return output_matrix, contradiction, pattern_code_set
 
 def observe(output_matrix, pattern_code_set, hash_frequency_dict, code_frequencies):
     least_entropy_flat_index = np.argmin(output_matrix["entropy"])
@@ -83,9 +86,9 @@ def observe(output_matrix, pattern_code_set, hash_frequency_dict, code_frequenci
         )
         else False
     )
-    output_matrix,contradiction = choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies)
+    output_matrix,contradiction, pattern_code_set = choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies)
     #Return output matrix
-    return (done, contradiction,output_matrix)
+    return (done, contradiction,output_matrix, pattern_code_set)
 
 def get_padded(output_matrix,PADMODE="FULLPERIODIC"):
     if(PADMODE=="FULLPERIODIC"):

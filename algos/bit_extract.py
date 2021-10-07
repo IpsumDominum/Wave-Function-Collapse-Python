@@ -28,7 +28,7 @@ def unique_colour_extract(filename):
                 unique_pixels = np.append(unique_pixels, [pix], axis=0)
     return unique_pixels
 
-print(unique_colour_extract("mooncity2.png"))
+print(unique_colour_extract("mooncity4.png"))
 
 
 
