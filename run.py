@@ -24,8 +24,8 @@ def main():
     except IndexError:
         print("specs file not specified, using specs/default.yaml...")
         spec_file = "default.yaml"
-        # spec_file = "mooncity.yaml"
-        # print("====================== \n RMB TO SWITCH BACK TO default.yaml \n =======================")
+        spec_file = "mooncitytest.yaml"
+        print("====================== \n RMB TO SWITCH BACK TO default.yaml \n =======================")
 
     if not os.path.isdir("specs"):
         os.makedirs("specs")
@@ -87,5 +87,5 @@ def main():
         cv2.destroyAllWindows()
         exit()
 
-cProfile.run("main()", sort="tottime")
-# main()
+# cProfile.run("main()", sort="tottime")
+main()
