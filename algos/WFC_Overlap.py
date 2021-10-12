@@ -100,12 +100,12 @@ def wfc_overlap_run(
     output_matrix = build_output_matrix(code_frequencies, output_w,output_h)
     output_matrix = (
         pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color_set,adjacency_matrices) if GROUND else output_matrix
-    )    
+    )
     ###################################################
     print("PROPAGATING...")
     output_matrix = propagate(
-        output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list,SPECS = SPECS
-    )        
+        output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list, N, SPECS = SPECS, pattern_code_set=pattern_code_set
+    )
     backtrack_queue,output_matrix,backtrack_no = prepare_backtrack(copy.deepcopy(output_matrix),MAX_BACKTRACK)
     while True:
         #===========================
@@ -124,16 +124,16 @@ def wfc_overlap_run(
                 backtrack_no = min(backtrack_no+2,MAX_BACKTRACK)
             except AssertionError:
                 output_matrix = backtrack_memory(backtrack_queue,len(backtrack_queue))
-                print("no previous state to backtrack on")                
+                print("no previous state to backtrack on")
                 backtrack_no = 1
-        else:            
+        else:
             backtrack_queue = update_queue(backtrack_queue, copy.deepcopy(output_matrix))
             backtrack_no = max(1,backtrack_no-1)
         #===========================
         # PROPAGATE
         #===========================
         output_matrix = propagate(
-            output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list,SPECS=SPECS
+            output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list, N, SPECS=SPECS, pattern_code_set=pattern_code_set
         )
         #===========================
         # RENDER

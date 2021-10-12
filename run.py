@@ -7,7 +7,9 @@ from algos.random_choice import random_choice_run
 from sys import argv
 import yaml
 import cProfile
+import random
 
+random.seed(123)
 
 def main():
     def load_spec(spec_dict, key, default):
@@ -23,7 +25,7 @@ def main():
     except IndexError:
         print("specs file not specified, using specs/default.yaml...")
         spec_file = "default.yaml"
-        spec_file = "mooncitytest.yaml"
+        spec_file = "mooncity.yaml"
         print("====================== \n RMB TO SWITCH BACK TO default.yaml \n=======================")
 
     if not os.path.isdir("specs"):

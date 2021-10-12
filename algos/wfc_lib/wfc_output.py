@@ -2,12 +2,14 @@ import numpy as np
 import numpy.ma as ma
 from algos.wfc_lib.wfc_utils import (cv_img,cv_wait,cv_write)
 from algos.wfc_lib.wfc_backtrack import backtrack_memory, update_queue
-from algos.wfc_lib.wfc_global_constraints import matrix_global_constr
+from algos.wfc_lib.wfc_global_constraints import matrix_global_constr, count_pixel
 import random
 import imageio
 
+LARGE_NUMBER = 131072
+global unique_obj_color
+unique_obj_color = [59, 235, 255]
 
-LARGE_NUMBER = 1000000
 
 def pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color_set,adjacency_matrices):
     output_matrix["valid_states"][:, -1, :] = False
@@ -69,8 +71,7 @@ def choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies):
         output_matrix["valid_states"][chosen_idx, array_index[0], array_index[1]] = True
         contradiction = False
 
-        output_matrix, pattern_code_set = matrix_global_constr(output_matrix, pattern_code_set, chosen_idx)
-        
+        output_matrix, pattern_code_set = matrix_global_constr(output_matrix, pattern_code_set, chosen_idx, array_index)
     return output_matrix, contradiction, pattern_code_set
 
 def observe(output_matrix, pattern_code_set, hash_frequency_dict, code_frequencies):
@@ -87,7 +88,6 @@ def observe(output_matrix, pattern_code_set, hash_frequency_dict, code_frequenci
         else False
     )
     output_matrix,contradiction, pattern_code_set = choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies)
-    #Return output matrix
     return (done, contradiction,output_matrix, pattern_code_set)
 
 def get_padded(output_matrix,PADMODE="FULLPERIODIC"):
@@ -129,7 +129,67 @@ def get_padded(output_matrix,PADMODE="FULLPERIODIC"):
             constant_values=True,
         )
     return padded
-def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list,SPECS):
+
+# around every yellow pixel, draw a 2N box around it, in this box if there are unchosen states, set entropy to 0
+def prioritise_unique_obj(output_matrix, pattern_code_set, unique_obj_color, N):
+    # matrix = [[-1, -1, -1, ...],
+    #           [-1, 64, 43, ...]]
+    chosen_states = output_matrix["chosen_states"]
+    row = chosen_states.shape[0]
+    col = chosen_states.shape[1]
+    pix_matrix = np.zeros(shape=(row, col))
+    for i in range(row):
+        for j in range(col):
+            code = chosen_states[i][j]
+            if code != -1:
+                pix = pattern_code_set[int(code)][0][0]
+                if (pix == unique_obj_color).all():         # if pixel matches unique color
+                        uli = max(i - N, 0)   # upper left corners pixel/tile of i and j
+                        ulj = max(j - N, 0)
+                        for i2 in range(uli, uli+2*N):
+                            for j2 in range(ulj, ulj+2*N):
+                                out_i = min(i2, row-1)
+                                out_j = min(j2, col-1)
+                                output_matrix["entropy"][out_i][out_j] = output_matrix["entropy"][out_i][out_j] - LARGE_NUMBER if chosen_states[out_i][out_j] == -1 else output_matrix["entropy"][out_i][out_j]
+    return output_matrix
+
+
+# prioritise top left of unique obj pixels (tile based)
+def prioritise_unique_obj_top_left_tile(output_matrix, pattern_code_set, unique_obj_color, N):
+    matrix = output_matrix["chosen_states"]
+    for i in range(matrix.shape[0]):
+        for j in range(matrix.shape[1]):
+            if count_pixel([matrix[i][j]], unique_obj_color) > 0:
+                output_matrix["entropy"][i][j] = output_matrix["entropy"][i][j] - LARGE_NUMBER
+    return output_matrix
+
+
+# prioritise top left of unique obj pixels, also prioritises +1 downwards and rightwards until there are no yellow pixels
+def prioritise_unique_obj_top_left(output_matrix, pattern_code_set, unique_obj_color, N):
+    chosen_states = output_matrix["chosen_states"]
+    row = chosen_states.shape[0]
+    col = chosen_states.shape[1]
+    pix_matrix = np.zeros(shape=(row, col))
+    for i in range(row):
+        for j in range(col):
+            code = chosen_states[i][j]
+            if code != -1:      # if state is chosen
+                pix = pattern_code_set[int(code)][0][0]
+                if (pix == unique_obj_color).all():         # if pixel matches unique color
+                        uli = max(i - (N-1), 0)   # upper left corners pixel/tile of i and j
+                        ulj = max(j - (N-1), 0)
+                        for i2 in range(uli, uli+N):
+                            for j2 in range(ulj, ulj+N):
+                                out_i = min(i2, row-1)
+                                out_j = min(j2, col-1)
+                                output_matrix["entropy"][out_i][out_j] = output_matrix["entropy"][out_i][out_j] - LARGE_NUMBER if chosen_states[out_i][out_j] == -1 else output_matrix["entropy"][out_i][out_j]
+                        output_matrix["entropy"][i+1][j] = output_matrix["entropy"][i+1][j] - LARGE_NUMBER if chosen_states[i+1][j] == -1 else output_matrix["entropy"][i+1][j]
+                        output_matrix["entropy"][i][j+1] = output_matrix["entropy"][i][j+1] - LARGE_NUMBER if chosen_states[i][j+1] == -1 else output_matrix["entropy"][i][j+1]
+                        output_matrix["entropy"][i+1][j+1] = output_matrix["entropy"][i+1][j+1] - LARGE_NUMBER if chosen_states[i+1][j+1] == -1 else output_matrix["entropy"][i+1][j+1]
+    return output_matrix
+
+
+def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list, N, SPECS, pattern_code_set):
     #import time
 
     #start = time.time()
@@ -176,10 +236,11 @@ def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies
                 if (output_matrix["chosen_states"][i][j] != -1)
                 else output_matrix["entropy"][i][j] + random.random()
             )
-            output_matrix["colors"][i][j] = np.average(
-                avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
-            )
-
+            # output_matrix["colors"][i][j] = np.average(
+            #     avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
+            # )
+            output_matrix["colors"][i][j] = [0,90,9]        # TEMP
+    output_matrix = prioritise_unique_obj_top_left(output_matrix, pattern_code_set, unique_obj_color, N)
     #print("ENTROPY TOOK : ",time.time()-start)
     return output_matrix
 
