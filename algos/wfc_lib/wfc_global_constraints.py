@@ -1,7 +1,13 @@
 import numpy as np
+import global_
 
-unique_constraint = False
-unique_tiles_deleted = False
+# def initialise_global_constraints():
+#     global_.unique_constraint = False
+#     global_.unique_tiles_deleted = False
+#     global_.max_non_unique = 2                # maximum number of unique pix a non unique-obj tile can hold
+#     global_.unique_threshold = 0
+#     global_.unique_pix = [59, 235, 255]    
+
 
 # takes in a tile, and a RGB list representing a pixel to
 # returns how many times the pixel appeared in the tile
@@ -27,11 +33,14 @@ def delete_moon_tiles(output_matrix, pattern_code_set, thresh_count, thresh_pix)
     for i in range(len(output_matrix["valid_states"])):
         if count_pixel(pattern_code_set[i], thresh_pix) > thresh_count:
             # delete tiles
-            print(i)
-            tile_availability = output_matrix["valid_states"][i]
-            tile_availability[:][:] = False
-    # TEMP NOTE: does not delete moon tiles completely, moon still generated after deletion (probably because it is added back in during propagation, need to ask chen)
-    return pattern_code_set
+            valid_states = output_matrix["valid_states"][i]
+            for row in range(valid_states.shape[0]):
+                for col in range(valid_states.shape[1]):
+                    output_matrix["valid_states"][i][row][col] = False
+                    # print("deletion:", output_matrix["valid_states"][i])
+
+            # valid_states[:][:] = False
+    return output_matrix
 
 
 # Takes in two tiles (patterns), sliced and sliced2
@@ -50,42 +59,39 @@ def adj_global_constr(sliced, sliced2):
     return True
 
 
-# Takes in the current output matrix, adjacency list, pattern to code set, assigned tile index
+
 # Changes the adjancencies of the output matrix to satisfy global constraints
 # Returns the output matrix with modified adjacency matrixs
 # matrix  constraints eg. "There can only be one moon, so once moon generated, cancel all moon tile adjacencies"
 def matrix_global_constr(output_matrix, pattern_code_set, chosen_idx, array_index):
-    max_non_moon = 2
-    moon_threshold = 0
-
+    # from global_ import unique_constraint, unique_tiles_deleted, max_non_unique, unique_threshold, unique_pix
     tile = pattern_code_set[chosen_idx]
-    unique_pix = [59, 235, 255]                        # yellow = 59 235 255
-    unique_count = count_pixel(tile, [59, 235, 255])    # count yellow color (for moon / window)
-    global unique_constraint, unique_tiles_deleted
+    unique_count = count_pixel(tile, global_.unique_pix)    # count unique_pix
     
-    if unique_constraint == True and unique_count < 1 and unique_tiles_deleted == False:  # if unique obj has been found and chosen tile has no unique obj pixels
+    if global_.unique_constraint == True and unique_count < 1 and global_.unique_tiles_deleted == False:  # if unique obj has been found and chosen tile has no unique obj pixels
         row_size = output_matrix["chosen_states"].shape[0]
         col_size = output_matrix["chosen_states"].shape[1]
         row = array_index[0]
         col = array_index[1]
 
-        # check if unique pix at its top, left, or topleft
+        # check if unique pix at its top, left, or topleft by 1 index
         unassigned = [-1, -1, -1]
         left_code = int(output_matrix["chosen_states"][row][col-1]) 
         top_code = int(output_matrix["chosen_states"][row-1][col]) 
         topleft_code = int(output_matrix["chosen_states"][row-1][col-1]) 
-        left_match = (pattern_code_set[left_code][0][0] == unique_pix).all() if left_code != -1 else False
-        top_match = (pattern_code_set[top_code][0][0] == unique_pix).all() if top_code != -1 else False
-        topleft_match = (pattern_code_set[topleft_code][0][0] == unique_pix).all() if topleft_code != -1 else False
+        left_match = (pattern_code_set[left_code][0][0] == global_.unique_pix).all() if left_code != -1 else False
+        top_match = (pattern_code_set[top_code][0][0] == global_.unique_pix).all() if top_code != -1 else False
+        topleft_match = (pattern_code_set[topleft_code][0][0] == global_.unique_pix).all() if topleft_code != -1 else False
 
         if left_match or top_match or topleft_match:
             return output_matrix, pattern_code_set
         else:
-            pattern_code_set = delete_moon_tiles(output_matrix, pattern_code_set, moon_threshold, unique_pix)
-            unique_tiles_deleted = True
+            output_matrix = delete_moon_tiles(output_matrix, pattern_code_set, global_.unique_threshold, global_.unique_pix)
+            global_.unique_tiles_deleted = True
+            a=1
 
-    elif unique_count > max_non_moon:                     # if is unique obj (found)
-        unique_constraint = True
+    elif unique_count > global_.max_non_unique:                     # if is unique obj (found)
+        global_.unique_constraint = True
     
     
     # finish generating yellow tiles first, then delete

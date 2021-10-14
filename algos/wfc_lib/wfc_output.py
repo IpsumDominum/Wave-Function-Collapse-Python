@@ -2,13 +2,12 @@ import numpy as np
 import numpy.ma as ma
 from algos.wfc_lib.wfc_utils import (cv_img,cv_wait,cv_write)
 from algos.wfc_lib.wfc_backtrack import backtrack_memory, update_queue
-from algos.wfc_lib.wfc_global_constraints import matrix_global_constr, count_pixel
+from algos.wfc_lib.wfc_global_constraints import matrix_global_constr, count_pixel, delete_moon_tiles
+import global_
 import random
 import imageio
 
 LARGE_NUMBER = 131072
-global unique_obj_color
-unique_obj_color = [59, 235, 255]
 
 
 def pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color_set,adjacency_matrices):
@@ -183,9 +182,11 @@ def prioritise_unique_obj_top_left(output_matrix, pattern_code_set, unique_obj_c
                                 out_i = min(i2, row-1)
                                 out_j = min(j2, col-1)
                                 output_matrix["entropy"][out_i][out_j] = output_matrix["entropy"][out_i][out_j] - LARGE_NUMBER if chosen_states[out_i][out_j] == -1 else output_matrix["entropy"][out_i][out_j]
-                        output_matrix["entropy"][i+1][j] = output_matrix["entropy"][i+1][j] - LARGE_NUMBER if chosen_states[i+1][j] == -1 else output_matrix["entropy"][i+1][j]
-                        output_matrix["entropy"][i][j+1] = output_matrix["entropy"][i][j+1] - LARGE_NUMBER if chosen_states[i][j+1] == -1 else output_matrix["entropy"][i][j+1]
-                        output_matrix["entropy"][i+1][j+1] = output_matrix["entropy"][i+1][j+1] - LARGE_NUMBER if chosen_states[i+1][j+1] == -1 else output_matrix["entropy"][i+1][j+1]
+                        inc_i = min(i+1, row-1)
+                        inc_j = min(j+1, col-1)
+                        output_matrix["entropy"][inc_i][j] = output_matrix["entropy"][inc_i][j] - LARGE_NUMBER if chosen_states[inc_i][j] == -1 else output_matrix["entropy"][inc_i][j]
+                        output_matrix["entropy"][i][inc_j] = output_matrix["entropy"][i][inc_j] - LARGE_NUMBER if chosen_states[i][inc_j] == -1 else output_matrix["entropy"][i][inc_j]
+                        output_matrix["entropy"][inc_i][inc_j] = output_matrix["entropy"][inc_i][inc_j] - LARGE_NUMBER if chosen_states[inc_i][inc_j] == -1 else output_matrix["entropy"][inc_i][inc_j]
     return output_matrix
 
 
@@ -216,7 +217,11 @@ def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies
         ).reshape(shifted.shape) > 0
         # Update output_matrix valid states
     for direction in directions_list:
-        output_matrix["valid_states"] *= support[direction]
+        output_matrix["valid_states"] *= support[direction]     
+        
+    # if global_.unique_tiles_deleted == True:
+    #     output_matrix = delete_moon_tiles(output_matrix, pattern_code_set, global_.unique_threshold, global_.unique_pix)
+
     #print("PROPAGATION TOOK : ",time.time()-start)
     #start = time.time()
     # Update new entropy for the matrix based on current available states
@@ -240,7 +245,7 @@ def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies
             #     avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
             # )
             output_matrix["colors"][i][j] = [0,90,9]        # TEMP
-    output_matrix = prioritise_unique_obj_top_left(output_matrix, pattern_code_set, unique_obj_color, N)
+    output_matrix = prioritise_unique_obj_top_left(output_matrix, pattern_code_set, global_.unique_pix, N)
     #print("ENTROPY TOOK : ",time.time()-start)
     return output_matrix
 

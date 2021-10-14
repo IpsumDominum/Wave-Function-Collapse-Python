@@ -6,6 +6,7 @@ import copy
 from collections import defaultdict
 import os
 import imageio
+import global_
 from algos.wfc_lib.wfc_global_constraints import final_global_constr
 from algos.wfc_lib.wfc_utils import (
     hash_function,
@@ -52,6 +53,8 @@ def wfc_overlap_run(
     WRITE_VIDEO=False,
     SPECS={},
 ):  
+    print("INITIALISING GLOBAL CONSTRAINTS...")
+    global_.initialise()
     ###################################################
     print("RUNNING")
     video_out = []
