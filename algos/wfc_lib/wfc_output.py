@@ -45,6 +45,12 @@ def choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies):
     valid_states_list = np.array(list(pattern_code_set.keys()))[
         output_matrix["valid_states"][:, array_index[0], array_index[1]] > 0
     ]
+
+    if len(valid_states_list) != 0:
+        for i in range(len(valid_states_list)):
+            if valid_states_list[i] in global_.deleted_tiles:
+                valid_states_list = np.delete(valid_states_list, i)
+
     #==================
     # CONTRADICTION
     #==================

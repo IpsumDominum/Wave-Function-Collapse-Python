@@ -22,24 +22,20 @@ def count_pixel(tile, pixel):
 # takes in set of tiles, number of threshold to consider moon tile, thresholding pixel (eg. yellow for moon)
 # returns pattern_code_set with deleted moon pixels
 def delete_moon_tiles(output_matrix, pattern_code_set, thresh_count, thresh_pix):
-
-    # # delete from pattern_code_set
-    # for i in range(len(pattern_code_set)-1, -1, -1):
-    #     # tile = pattern_code_set[i]
+    # # delete from output_matrix["valid_states"]
+    # for i in range(len(output_matrix["valid_states"])):
     #     if count_pixel(pattern_code_set[i], thresh_pix) > thresh_count:
-    #         pattern_code_set.pop(i)
-    
-    # delete from output_matrix["valid_states"]
+    #         # delete tiles
+    #         valid_states = output_matrix["valid_states"][i]
+    #         for row in range(valid_states.shape[0]):
+    #             for col in range(valid_states.shape[1]):
+    #                 output_matrix["valid_states"][i][row][col] = False
+    #         # valid_states[:][:] = False
+
     for i in range(len(output_matrix["valid_states"])):
         if count_pixel(pattern_code_set[i], thresh_pix) > thresh_count:
             # delete tiles
-            valid_states = output_matrix["valid_states"][i]
-            for row in range(valid_states.shape[0]):
-                for col in range(valid_states.shape[1]):
-                    output_matrix["valid_states"][i][row][col] = False
-                    # print("deletion:", output_matrix["valid_states"][i])
-
-            # valid_states[:][:] = False
+            global_.deleted_tiles.append(i)
     return output_matrix
 
 

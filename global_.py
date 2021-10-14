@@ -1,6 +1,6 @@
 
 def initialise():
-    global unique_constraint, unique_tiles_deleted, max_non_unique, unique_threshold, unique_pix
+    global unique_constraint, unique_tiles_deleted, max_non_unique, unique_threshold, unique_pix, deleted_tiles
 
     # hyperparameters
     unique_constraint = False         # found unique tile
@@ -9,4 +9,5 @@ def initialise():
     unique_threshold = 1              # any tiles with more than this unique pixel will be deleted
     unique_pix = [59, 235, 255] 
 
-
+    # parameters
+    deleted_tiles = []

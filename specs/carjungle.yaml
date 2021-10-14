@@ -1,0 +1,17 @@
+##########################
+carjungle.png:
+  OUTPUT_W: 32
+  OUTPUT_H: 32
+  PADMODE: "LRPERIODIC"
+  N : 3
+  VISUALIZE_ENCODE: False
+  VISUALIZE_ADJACENCY: False
+  WRITE : False
+  WRITE_VIDEO : True
+  GROUND : True
+  MAX_BACKTRACK : 20
+  GROUND_LEVEL : 36
+  MODE : "overlap"
+##########################
+
+  
