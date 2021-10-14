@@ -10,7 +10,7 @@ carjungle.png:
   WRITE_VIDEO : True
   GROUND : True
   MAX_BACKTRACK : 20
-  GROUND_LEVEL : 36
+  GROUND_LEVEL : 19
   MODE : "overlap"
 ##########################
 

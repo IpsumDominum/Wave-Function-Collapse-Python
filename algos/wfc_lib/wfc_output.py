@@ -47,7 +47,7 @@ def choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies):
     ]
 
     if len(valid_states_list) != 0:
-        for i in range(len(valid_states_list)):
+        for i in range(len(valid_states_list)-1, -1, -1):
             if valid_states_list[i] in global_.deleted_tiles:
                 valid_states_list = np.delete(valid_states_list, i)
 
@@ -250,7 +250,7 @@ def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies
             # output_matrix["colors"][i][j] = np.average(
             #     avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
             # )
-            output_matrix["colors"][i][j] = [0,90,9]        # TEMP
+            output_matrix["colors"][i][j] = [0,90,0]        # TEMP
     output_matrix = prioritise_unique_obj_top_left(output_matrix, pattern_code_set, global_.unique_pix, N)
     #print("ENTROPY TOOK : ",time.time()-start)
     return output_matrix
