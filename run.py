@@ -23,9 +23,7 @@ def main():
         spec_file = argv[1]
     except IndexError:
         print("specs file not specified, using specs/default.yaml...")
-        spec_file = "default.yaml"
-        # spec_file = "mooncity.yaml"
-        # print("====================== \n RMB TO SWITCH BACK TO default.yaml \n =======================")
+        spec_file = "Sewers.yaml"
 
     if not os.path.isdir("specs"):
         os.makedirs("specs")

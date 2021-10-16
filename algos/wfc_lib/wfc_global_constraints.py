@@ -22,6 +22,12 @@ def adj_global_constr(sliced, sliced2):
 # matrix  constraints eg. "There can only be one moon, so once moon generated, cancel all moon tile adjacencies"
 def matrix_global_constr(output_matrix):
     # add output_matrix level constraints here
+    row_size = output_matrix["chosen_states"].shape[0]
+    col_size = output_matrix["chosen_states"].shape[1]
+
+
+    print(output_matrix)
+
     return output_matrix
 
 

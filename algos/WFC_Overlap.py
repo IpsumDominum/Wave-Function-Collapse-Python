@@ -7,6 +7,8 @@ from collections import defaultdict
 import os
 import imageio
 from algos.wfc_lib.wfc_global_constraints import final_global_constr
+from algos.wfc_lib.wfc_global_constraints import matrix_global_constr
+
 from algos.wfc_lib.wfc_utils import (
     hash_function,
     is_same_pattern,
@@ -152,6 +154,7 @@ def wfc_overlap_run(
             break
         #if done: exit()
     final_constraints_satisfied = final_global_constr(output_matrix)
+    final_constraints_satisfied = matrix_global_constr(output_matrix)
     print("Constraints satisfied:", final_constraints_satisfied)  #If false, we can observe why and re-run mannually
     cv2.destroyAllWindows()
     if(WRITE_VIDEO):imageio.mimsave(os.path.join("wfc_outputs",output_name+".gif"),video_out)

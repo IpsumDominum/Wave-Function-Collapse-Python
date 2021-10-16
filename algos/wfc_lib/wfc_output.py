@@ -41,6 +41,7 @@ def get_probs(frequency_list):
 def choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies):
     # Collapse the Wave Function for this block here.
     # Choose from all the possible states based on adjacency constraint
+
     valid_states_list = np.array(list(pattern_code_set.keys()))[
         output_matrix["valid_states"][:, array_index[0], array_index[1]] > 0
     ]
