@@ -67,9 +67,8 @@ python test.py --Flowers.png
 
 6.Overlap global constraints -> Ground (Done)
 
-7.Overlap more global constraints (TODO)
+7.Overlap more global constraints (Done)
 
-7.Overlap more global constraints (TODO)
 
 
 
