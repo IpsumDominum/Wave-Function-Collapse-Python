@@ -9,9 +9,13 @@ carjungle.png:
   WRITE : False
   WRITE_VIDEO : True
   GROUND : True
-  MAX_BACKTRACK : 20
-  GROUND_LEVEL : 19
+  MAX_BACKTRACK : 40
+  GROUND_LEVEL : 21
   MODE : "overlap"
+  OUTPUT_NAME: "carjungle"
+  UNIQUE_PIXEL: [28, 28, 183]
+  UNIQUE_ID_THRESHOLD: 2
+  UNIQUE_DEL_THRESHOLD: 2
 ##########################
 
   

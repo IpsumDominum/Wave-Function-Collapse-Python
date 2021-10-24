@@ -67,9 +67,15 @@ def choose_pattern(output_matrix,array_index,pattern_code_set,code_frequencies):
             ]
         )
         #Set chosen pattern
-        chosen_idx = (
-            np.random.choice(valid_states_list, p=p)
-        )
+        try:
+            chosen_idx = (
+                np.random.choice(valid_states_list, p=p)
+            )
+        except:
+            chosen_idx = (
+                np.random.choice(valid_states_list)
+            )
+            print("Too many p for a in choose_pattern()")
         #Update valid states
         output_matrix["chosen_states"][array_index[0], array_index[1]] = chosen_idx
         output_matrix["valid_states"][:, array_index[0], array_index[1]] = False
@@ -247,10 +253,10 @@ def propagate(output_matrix, avg_color_set, adjacency_matrices, code_frequencies
                 if (output_matrix["chosen_states"][i][j] != -1)
                 else output_matrix["entropy"][i][j] + random.random()
             )
-            # output_matrix["colors"][i][j] = np.average(
-            #     avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
-            # )
-            output_matrix["colors"][i][j] = [0,90,0]        # TEMP
+            output_matrix["colors"][i][j] = np.average(
+                avg_color_set[output_matrix["valid_states"][:, i, j] > 0], axis=0
+            )
+            # output_matrix["colors"][i][j] = [0,90,0]        # TEMP
     output_matrix = prioritise_unique_obj_top_left(output_matrix, pattern_code_set, global_.unique_pix, N)
     #print("ENTROPY TOOK : ",time.time()-start)
     return output_matrix

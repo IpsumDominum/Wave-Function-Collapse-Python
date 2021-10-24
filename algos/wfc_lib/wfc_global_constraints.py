@@ -36,7 +36,7 @@ def delete_moon_tiles(output_matrix, pattern_code_set, thresh_count, thresh_pix)
         if count_pixel(pattern_code_set[i], thresh_pix) > thresh_count:
             # delete tiles
             global_.deleted_tiles.append(i)
-    return output_matrix
+    return output_matrix 
 
 
 # Takes in two tiles (patterns), sliced and sliced2

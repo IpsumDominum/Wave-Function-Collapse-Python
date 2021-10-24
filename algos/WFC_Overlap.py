@@ -38,6 +38,11 @@ Sample over NxN crops of Input image, to create selection array
 for output, each grid selects out of random one of the selection array membe
 """
 
+def initialise_constraints(unique_pixel, unique_id_threshold, unique_del_threshold):
+    global_.initialise()
+    global_.unique_pix = unique_pixel
+    global_.max_non_unique = unique_id_threshold
+    global_.unique_threshold = unique_del_threshold
 
 def wfc_overlap_run(
     input_img,
@@ -54,7 +59,6 @@ def wfc_overlap_run(
     SPECS={},
 ):  
     print("INITIALISING GLOBAL CONSTRAINTS...")
-    global_.initialise()
     ###################################################
     print("RUNNING")
     video_out = []
@@ -123,14 +127,14 @@ def wfc_overlap_run(
         if(contradiction):
             print("Contradiction! Backtracking...step {}".format(backtrack_no))
             try:
-                output_matrix = copy.deepcopy(backtrack_memory(backtrack_queue,backtrack_no))                            
+                output_matrix = copy.deepcopy(backtrack_memory(backtrack_queue,MAX_BACKTRACK,backtrack_no))                            
                 backtrack_no = min(backtrack_no+2,MAX_BACKTRACK)
             except AssertionError:
                 output_matrix = backtrack_memory(backtrack_queue,len(backtrack_queue))
                 print("no previous state to backtrack on")
                 backtrack_no = 1
         else:
-            backtrack_queue = update_queue(backtrack_queue, copy.deepcopy(output_matrix))
+            backtrack_queue = update_queue(backtrack_queue, copy.deepcopy(output_matrix), MAX_BACKTRACK)
             backtrack_no = max(1,backtrack_no-1)
         #===========================
         # PROPAGATE
@@ -149,12 +153,14 @@ def wfc_overlap_run(
         #===========================
         if WRITE_VIDEO:
             im_rgb = cv2.cvtColor(rendered.astype(np.uint8), cv2.COLOR_BGR2RGB)
-            im_rgb = cv2.resize(im_rgb,(512,512))
+            im_rgb = cv2.resize(im_rgb,(512,512), interpolation=3)
             video_out.append(im_rgb)
         k = cv2.waitKey(1)
         if k == ord("q"):
             break
-        #if done: exit()
+        done = False
+        if done: 
+            break
     final_constraints_satisfied = final_global_constr(output_matrix)
     print("Constraints satisfied:", final_constraints_satisfied)  #If false, we can observe why and re-run mannually
     cv2.destroyAllWindows()

@@ -12,9 +12,10 @@ cresentcity2.png:
   MAX_BACKTRACK: 20
   GROUND_LEVEL: 26
   MODE: "overlap"
+  OUTPUT_NAME: "cresentcity"
   UNIQUE_PIXEL: [59, 235, 255]
   UNIQUE_ID_THRESHOLD: 2
-  UNIQUE_DEL_THRESHOLD: 1
+  UNIQUE_DEL_THRESHOLD: 2
 ##########################
 
   
