@@ -44,7 +44,7 @@ python run.py --spec file location
 ```
 Example:
 ```bash
-python run.py flowers.yaml
+python run.py flowersAbsoluteGC.yaml
 ```
 
 
