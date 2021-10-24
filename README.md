@@ -17,10 +17,6 @@ Flower.png             | Red Maze.png| 3Bricks.png | Platformer.png
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
 ![Flower](./wfc_outputs/Flowers.png.gif) | ![Red Maze](./gifs/RedMaze.png.gif)| ![3Bricks](./wfc_outputs/3Bricks.png.gif)|![Platformer](./wfc_outputs/Platformer.png.gif)
 
-### More Visualizations
- Mountains.png | Rooms.png |Water.png|
- :-------------------------:|:-------------------------:|:-------------------------:|
- [Mountains](./wfc_outputs/Mountains.png.gif)|[Rooms](./wfc_outputs/Rooms.png.gif)|[Water](./wfc_outputs/Water.png.gif)|
 
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
@@ -44,11 +40,11 @@ this to add python to your system path.
 ### How to run
 
 ```bash
-python test.py --img_name.png
+python run.py --spec file location
 ```
 Example:
 ```bash
-python test.py --Flowers.png
+python run.py flowers.yaml
 ```
 
 
@@ -67,10 +63,4 @@ python test.py --Flowers.png
 
 6.Overlap global constraints -> Ground (Done)
 
-7.Overlap more global constraints (TODO)
-
-7.Overlap more global constraints (TODO)
-
-
-
-
+7.Overlap more global constraints (Done)
