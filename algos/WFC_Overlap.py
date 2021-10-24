@@ -6,6 +6,7 @@ import copy
 from collections import defaultdict
 import os
 import imageio
+import global_
 from algos.wfc_lib.wfc_global_constraints import final_global_constr
 from algos.wfc_lib.wfc_utils import (
     hash_function,
@@ -37,6 +38,11 @@ Sample over NxN crops of Input image, to create selection array
 for output, each grid selects out of random one of the selection array membe
 """
 
+def initialise_constraints(unique_pixel, unique_id_threshold, unique_del_threshold):
+    global_.initialise()
+    global_.unique_pix = unique_pixel
+    global_.max_non_unique = unique_id_threshold
+    global_.unique_threshold = unique_del_threshold
 
 def wfc_overlap_run(
     input_img,
@@ -52,6 +58,7 @@ def wfc_overlap_run(
     WRITE_VIDEO=False,
     SPECS={},
 ):  
+    print("INITIALISING GLOBAL CONSTRAINTS...")
     ###################################################
     print("RUNNING")
     video_out = []
@@ -83,6 +90,7 @@ def wfc_overlap_run(
         ground,
         code_frequencies,
     ) = get_hash_to_code(pattern_set, ground, hash_frequency_dict, GROUND=GROUND)
+    ori_pattern_code_set = pattern_code_set.copy()
     ###################################################
     print("EXTRACTING ADJACENCY...")
     adjacency_list = extract_adjacency(
@@ -99,18 +107,18 @@ def wfc_overlap_run(
     output_matrix = build_output_matrix(code_frequencies, output_w,output_h)
     output_matrix = (
         pad_ground(output_matrix, ground,pattern_code_set,code_frequencies,avg_color_set,adjacency_matrices) if GROUND else output_matrix
-    )    
+    )
     ###################################################
     print("PROPAGATING...")
     output_matrix = propagate(
-        output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list,SPECS = SPECS
-    )        
+        output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list, N, SPECS = SPECS, pattern_code_set=pattern_code_set
+    )
     backtrack_queue,output_matrix,backtrack_no = prepare_backtrack(copy.deepcopy(output_matrix),MAX_BACKTRACK)
     while True:
         #===========================
         # OBSERVE
         #===========================
-        done,contradiction, output_matrix = observe(
+        done,contradiction, output_matrix, pattern_code_set = observe(
             output_matrix, pattern_code_set, hash_frequency_dict, code_frequencies
         )
         #===========================
@@ -119,38 +127,40 @@ def wfc_overlap_run(
         if(contradiction):
             print("Contradiction! Backtracking...step {}".format(backtrack_no))
             try:
-                output_matrix = copy.deepcopy(backtrack_memory(backtrack_queue,backtrack_no))                            
+                output_matrix = copy.deepcopy(backtrack_memory(backtrack_queue,MAX_BACKTRACK,backtrack_no))                            
                 backtrack_no = min(backtrack_no+2,MAX_BACKTRACK)
             except AssertionError:
                 output_matrix = backtrack_memory(backtrack_queue,len(backtrack_queue))
-                print("no previous state to backtrack on")                
+                print("no previous state to backtrack on")
                 backtrack_no = 1
-        else:            
-            backtrack_queue = update_queue(backtrack_queue, copy.deepcopy(output_matrix))
+        else:
+            backtrack_queue = update_queue(backtrack_queue, copy.deepcopy(output_matrix), MAX_BACKTRACK)
             backtrack_no = max(1,backtrack_no-1)
         #===========================
         # PROPAGATE
         #===========================
         output_matrix = propagate(
-            output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list,SPECS=SPECS
+            output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list, N, SPECS=SPECS, pattern_code_set=pattern_code_set
         )
         #===========================
         # RENDER
         #===========================
         rendered = render(
-            output_matrix, output_w,output_h, N, pattern_code_set, WRITE_VIDEO=WRITE_VIDEO
+            output_matrix, output_w,output_h, N, ori_pattern_code_set, WRITE_VIDEO=WRITE_VIDEO
         )
         #===========================
         # DISPLAY AND WRITE(OPTIONAL)
         #===========================
         if WRITE_VIDEO:
             im_rgb = cv2.cvtColor(rendered.astype(np.uint8), cv2.COLOR_BGR2RGB)
-            im_rgb = cv2.resize(im_rgb,(512,512))
+            im_rgb = cv2.resize(im_rgb,(512,512), interpolation=3)
             video_out.append(im_rgb)
         k = cv2.waitKey(1)
         if k == ord("q"):
             break
-        #if done: exit()
+        done = False
+        if done: 
+            break
     final_constraints_satisfied = final_global_constr(output_matrix)
     print("Constraints satisfied:", final_constraints_satisfied)  #If false, we can observe why and re-run mannually
     cv2.destroyAllWindows()

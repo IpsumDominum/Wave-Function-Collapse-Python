@@ -2,13 +2,14 @@ import cv2
 import os
 import math
 from algos.WFC import wfc_run
-from algos.WFC_Overlap import wfc_overlap_run
+from algos.WFC_Overlap import wfc_overlap_run, initialise_constraints
 from algos.random_choice import random_choice_run
 from sys import argv
 import yaml
 import cProfile
+import random
 
-
+# random.seed(123)  
 
 def main():
     def load_spec(spec_dict, key, default):
@@ -24,8 +25,8 @@ def main():
     except IndexError:
         print("specs file not specified, using specs/default.yaml...")
         spec_file = "default.yaml"
-        # spec_file = "mooncity.yaml"
-        # print("====================== \n RMB TO SWITCH BACK TO default.yaml \n =======================")
+        spec_file = "mooncity.yaml"
+        print("====================== \n RMB TO SWITCH BACK TO default.yaml \n=======================")
 
     if not os.path.isdir("specs"):
         os.makedirs("specs")
@@ -56,8 +57,14 @@ def main():
         GROUND = load_spec(specs[spec], "GROUND", False)
         GROUND_LEVEL = load_spec(specs[spec], "GROUND_LEVEL", -1)
         MODE = load_spec(specs[spec],"MODE","overlap")
+        UNIQUE_PIXEL = load_spec(specs[spec], "UNIQUE_PIXEL", [-1, -1, -1])
+        UNIQUE_ID_THRESHOLD = load_spec(specs[spec], "UNIQUE_ID_THRESHOLD", 2)
+        UNIQUE_DEL_THRESHOLD = load_spec(specs[spec], "UNIQUE_DEL_THRESHOLD", 2)
+
+
         try:
             if(MODE=="overlap"):
+                initialise_constraints(UNIQUE_PIXEL, UNIQUE_ID_THRESHOLD, UNIQUE_DEL_THRESHOLD)
                 wfc_overlap_run(
                     item_img,
                     N,

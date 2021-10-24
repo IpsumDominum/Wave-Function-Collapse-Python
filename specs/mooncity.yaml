@@ -1,17 +1,21 @@
 ##########################
-testmoon.png:
+mooncity4.png:
   OUTPUT_W: 32
   OUTPUT_H: 32
   PADMODE: "LRPERIODIC"
-  N : 3
+  N: 3
   VISUALIZE_ENCODE: False
   VISUALIZE_ADJACENCY: False
-  WRITE : False
-  WRITE_VIDEO : True
-  GROUND : True
-  MAX_BACKTRACK : 20
-  GROUND_LEVEL : 19
-  MODE : "overlap"
+  WRITE: False
+  WRITE_VIDEO: True
+  GROUND: True
+  MAX_BACKTRACK: 20
+  GROUND_LEVEL: 26
+  MODE: "overlap"
+  OUTPUT_NAME: "mooncity"
+  UNIQUE_PIXEL: [59, 235, 256]
+  UNIQUE_ID_THRESHOLD: 2
+  UNIQUE_DEL_THRESHOLD: 1
 ##########################
 
   
