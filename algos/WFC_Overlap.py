@@ -57,6 +57,7 @@ def wfc_overlap_run(
     MAX_BACKTRACK = 5,
     WRITE_VIDEO=False,
     SPECS={},
+    ABS_TILE=-1
 ):  
     print("INITIALISING GLOBAL CONSTRAINTS...")
     ###################################################
@@ -113,7 +114,8 @@ def wfc_overlap_run(
     output_matrix = propagate(
         output_matrix, avg_color_set, adjacency_matrices, code_frequencies,directions_list, N, SPECS = SPECS, pattern_code_set=pattern_code_set
     )
-    apply_absolute_global_constraints(output_matrix,hash_to_code_dict)
+    if ABS_TILE != -1:
+        apply_absolute_global_constraints(output_matrix,hash_to_code_dict)
     backtrack_queue,output_matrix,backtrack_no = prepare_backtrack(copy.deepcopy(output_matrix),MAX_BACKTRACK)
     while True:
         #===========================

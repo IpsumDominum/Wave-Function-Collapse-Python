@@ -25,7 +25,7 @@ def main():
     except IndexError:
         print("specs file not specified, using specs/default.yaml...")
         spec_file = "default.yaml"
-        spec_file = "default.yaml"
+        spec_file = "carjungle.yaml"
         print("====================== \n RMB TO SWITCH BACK TO default.yaml \n=======================")
 
     if not os.path.isdir("specs"):
@@ -60,7 +60,7 @@ def main():
         UNIQUE_PIXEL = load_spec(specs[spec], "UNIQUE_PIXEL", [-1, -1, -1])
         UNIQUE_ID_THRESHOLD = load_spec(specs[spec], "UNIQUE_ID_THRESHOLD", 2)
         UNIQUE_DEL_THRESHOLD = load_spec(specs[spec], "UNIQUE_DEL_THRESHOLD", 2)
-
+        ABS_TILE = load_spec(specs[spec], "ABSOLUTE_TILES", -1)
 
         try:
             if(MODE=="overlap"):
@@ -77,7 +77,8 @@ def main():
                     WRITE=WRITE,
                     WRITE_VIDEO=WRITE_VIDEO,
                     GROUND = GROUND,
-                    SPECS=specs[spec]
+                    SPECS=specs[spec],
+                    ABS_TILE= ABS_TILE
                 )
             elif(MODE=="tiled"):
                 wfc_run(item_img,N,OUTPUT_SIZE,output_name=OUTPUT_NAME,write_output=False) # under construction
