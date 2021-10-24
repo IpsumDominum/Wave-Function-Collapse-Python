@@ -44,11 +44,11 @@ this to add python to your system path.
 ### How to run
 
 ```bash
-python test.py --img_name.png
+python run.py --spec file name
 ```
 Example:
 ```bash
-python test.py --Flowers.png
+python run.py flowers.yaml
 ```
 
 
