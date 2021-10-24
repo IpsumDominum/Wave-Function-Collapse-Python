@@ -25,8 +25,8 @@ def main():
     except IndexError:
         print("specs file not specified, using specs/default.yaml...")
         spec_file = "default.yaml"
-        spec_file = "carjungle.yaml"
-        print("====================== \n RMB TO SWITCH BACK TO default.yaml \n=======================")
+        #spec_file = "carjungle.yaml"
+        #print("====================== \n RMB TO SWITCH BACK TO default.yaml \n=======================")
 
     if not os.path.isdir("specs"):
         os.makedirs("specs")
