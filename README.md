@@ -17,7 +17,8 @@ Flower.png             | Red Maze.png| 3Bricks.png | Platformer.png
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
 ![Flower](./wfc_outputs/Flowers.png.gif) | ![Red Maze](./gifs/RedMaze.png.gif)| ![3Bricks](./wfc_outputs/3Bricks.png.gif)|![Platformer](./wfc_outputs/Platformer.png.gif)
 
-
+### Original Project
+The original project which introduced the wave fu)nction collapse algorithm is by Maxim Gumin. [Original Github](https://github.com/mxgmn/WaveFunctionCollapse)
 ### Setup python / enviornment
 The code should be python2 and 3 compatible.
 But recommended to use python3, since python2 is no longer maintained.
