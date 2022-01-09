@@ -1,4 +1,4 @@
-# COMPSCI 715 Group Project
+# Wave Function Collapse Algorithm (Another Python Implementation)
 
 <!--
 #### Tile Based (Adjacency extracted from input image relationships)
